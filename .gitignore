@@ -3,6 +3,10 @@ dist
 .accio
 .accio-site.json
 .npmrc
+# Only package-lock.json ships. The pnpm lockfile is local tooling state and a
+# stale lockfileVersion would break the Cloudflare Pages builder.
+pnpm-lock.yaml
+pnpm-workspace.yaml
 .env
 .env.local
 .env.*.local
