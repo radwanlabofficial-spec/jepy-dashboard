@@ -1,0 +1,4 @@
+# Cloudflare Pages SPA fallback.
+# Extensionless paths serve index.html so shared links and refreshes work.
+# Static assets keep their exact paths; files with an extension are never rewritten.
+/*    /index.html   200

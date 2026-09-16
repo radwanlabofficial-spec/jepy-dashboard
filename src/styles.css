@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url('/assets/fonts/inter-latin-wght-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400 500;
+  font-display: swap;
+  src: url('/assets/fonts/jetbrains-mono-latin-wght-normal.woff2') format('woff2');
+}
+
+/* The only values Tailwind utility classes cannot express (13a §1.2, §3.3). */
+:root {
+  --jepy-green: #4ade50;
+  --jepy-green-soft: rgba(74, 222, 80, 0.12);
+  --jepy-green-line: rgba(74, 222, 80, 0.38);
+  --jepy-on-green: #07130a;
+  --jepy-scroll: #3f3f46;
+}
+
+@layer base {
+  html {
+    background-color: #09090b;
+  }
+  body {
+    @apply bg-zinc-950 text-zinc-100 font-sans antialiased;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+  /* Scrollbars are part of the instrument panel, not the OS. */
+  * {
+    scrollbar-color: var(--jepy-scroll) transparent;
+    scrollbar-width: thin;
+  }
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background-color: var(--jepy-scroll);
+    border-radius: 6px;
+    border: 2px solid #09090b;
+  }
+  /* Never remove the focus ring: in a dark UI the browser default is invisible. */
+  :focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 1px var(--jepy-green);
+  }
+  th {
+    text-align: left;
+  }
+  table {
+    border-collapse: collapse;
+  }
+}
+
+/* Active sidebar item: an inset 2px rail, never a border — a border would shift
+   the layout by 2px and the nav item would jump on selection (13a §3.3). */
+.nav-active {
+  background: var(--jepy-green-soft);
+  box-shadow: inset 2px 0 0 var(--jepy-green);
+}

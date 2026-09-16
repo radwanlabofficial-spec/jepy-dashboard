@@ -1,0 +1,15 @@
+node_modules
+dist
+.accio
+.accio-site.json
+.npmrc
+.env
+.env.local
+.env.*.local
+.dev.vars
+.DS_Store
+*.sqlite
+*.sqlite3
+*.parquet
+dump/
+*.log
