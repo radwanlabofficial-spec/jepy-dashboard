@@ -1,0 +1,12 @@
+# Cloudflare Pages configuration, read by both the Git build and `wrangler pages deploy`.
+#
+# `pages_build_output_dir` is what tells the Pages build system where the compiled
+# site lands. Without it the builder has no build command and no output directory
+# for this project and falls back to publishing the repository root as static
+# files — which serves the raw index.html that points at /src/main.tsx and renders
+# a blank page. Keeping the setting in the repository means the deploy does not
+# depend on values that only exist in a dashboard form.
+
+name = "jepy-dashboard"
+compatibility_date = "2026-09-16"
+pages_build_output_dir = "dist"
