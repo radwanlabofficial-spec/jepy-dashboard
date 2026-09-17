@@ -1,7 +1,9 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  /** Base URL of the Jepy Worker API. Empty or unset runs the console on demo fixtures. */
+  /** `demo` (the default) or `live`. */
+  readonly VITE_API_MODE?: string;
+  /** Base URL of the Jepy Worker API. Empty in live mode means same-origin through the Pages proxy. */
   readonly VITE_API_BASE?: string;
 }
 
