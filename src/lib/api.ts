@@ -19,11 +19,20 @@ import type {
 const API_BASE = (import.meta.env.VITE_API_BASE ?? '').trim();
 
 /**
- * True when no API origin is configured. The console then reads bundled
- * fixtures and shows a permanent "Demo data" chip, so a reviewer can never
- * mistake demo rows for pipeline output.
+ * Two modes, chosen at build time.
+ *
+ * `demo` (the default) reads bundled fixtures and shows a permanent "Demo data"
+ * chip, so a reviewer can never mistake fixture rows for pipeline output.
+ *
+ * `live` calls the real API. With an empty base URL that means same-origin: the
+ * console requests `/api/...` on its own Pages hostname and a Pages Function
+ * proxies the call to the Worker, forwarding the Cloudflare Access assertion
+ * header. That same-origin hop is what makes the Access session work at all —
+ * a direct cross-origin call to the Worker would arrive without the assertion,
+ * because Cloudflare only adds it for requests to the protected hostname.
  */
-export const isDemoMode = API_BASE.length === 0;
+const API_MODE = (import.meta.env.VITE_API_MODE ?? 'demo').trim();
+export const isDemoMode = API_MODE !== 'live';
 
 export class ApiFailure extends Error {
   readonly code: ErrorCode;
