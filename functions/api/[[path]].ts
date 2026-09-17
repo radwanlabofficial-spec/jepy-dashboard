@@ -17,28 +17,36 @@
  */
 
 interface Env {
-  /** Origin of the Jepy Worker, e.g. https://jepy-worker.radwanlab-official.workers.dev */
-  API_ORIGIN: string;
+  /** Origin of the Jepy Worker. Overrides the default below when set. */
+  API_ORIGIN?: string;
 }
+
+/**
+ * The default exists because the Pages settings API silently drops
+ * `deployment_configs.production.env_vars`: the PATCH reports success and the
+ * value lands under `preview`, so the production build never sees it. Rather
+ * than depend on a setting that cannot be stored, the origin lives here — the
+ * same reasoning that moved the build configuration into wrangler.toml and the
+ * console's API mode into .env.production. It is a public hostname, not a secret.
+ */
+const DEFAULT_API_ORIGIN = 'https://jepy-worker.radwanlab-official.workers.dev';
 
 export const onRequest = async (context: { request: Request; env: Env }): Promise<Response> => {
   const { request, env } = context;
+  const origin = (env.API_ORIGIN ?? DEFAULT_API_ORIGIN).trim();
 
-  if (!env.API_ORIGIN) {
+  if (!origin) {
     return new Response(
       JSON.stringify({
         ok: false,
-        error: {
-          code: 'E_INTERNAL',
-          message: 'API_ORIGIN সেট করা নেই — Pages project-এর env var দেখুন',
-        },
+        error: { code: 'E_INTERNAL', message: 'API origin is not configured' },
       }),
       { status: 500, headers: { 'content-type': 'application/json; charset=utf-8' } },
     );
   }
 
   const incoming = new URL(request.url);
-  const target = new URL(incoming.pathname + incoming.search, env.API_ORIGIN);
+  const target = new URL(incoming.pathname + incoming.search, origin);
 
   const headers = new Headers(request.headers);
   // The `host` header must reflect the target, and Cloudflare recomputes it from
