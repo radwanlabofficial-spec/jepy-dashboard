@@ -264,7 +264,16 @@ export const api = {
   sources: {
     directories: (): Promise<DirectorySource[]> => (isDemoMode ? Promise.resolve(demo.directories) : request<DirectorySource[]>('/api/sources/directories')),
     packs: (sourceKey?: string): Promise<SelectorPack[]> => {
-      if (!isDemoMode) return request<SelectorPack[]>(`/api/sources/directories/${sourceKey ?? ''}/selector-packs`);
+      // Without a source key the old form built `/directories//selector-packs`,
+      // a double slash that matches no route and is refused before it reaches the
+      // Worker — which surfaced as an unparseable body and an E_INTERNAL banner.
+      if (!isDemoMode) {
+        return request<SelectorPack[]>(
+          sourceKey
+            ? `/api/sources/directories/${encodeURIComponent(sourceKey)}/selector-packs`
+            : '/api/sources/selector-packs',
+        );
+      }
       const rows = sourceKey ? demo.selectorPacks.filter((row) => row.source_key === sourceKey) : demo.selectorPacks;
       return Promise.resolve(rows);
     },
