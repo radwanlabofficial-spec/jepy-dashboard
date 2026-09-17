@@ -31,7 +31,12 @@ const API_BASE = (import.meta.env.VITE_API_BASE ?? '').trim();
  * a direct cross-origin call to the Worker would arrive without the assertion,
  * because Cloudflare only adds it for requests to the protected hostname.
  */
-const API_MODE = (import.meta.env.VITE_API_MODE ?? 'demo').trim();
+// The fallback is deliberate and asymmetric. In a production build with no flag
+// the console goes LIVE, because the dangerous failure here is not an empty
+// screen — it is showing fabricated numbers in a console an operator acts on.
+// Development defaults to demo, where fixtures are the point.
+const RAW_MODE = import.meta.env.VITE_API_MODE ?? (import.meta.env.PROD ? 'live' : 'demo');
+const API_MODE = RAW_MODE.trim();
 export const isDemoMode = API_MODE !== 'live';
 
 export class ApiFailure extends Error {
