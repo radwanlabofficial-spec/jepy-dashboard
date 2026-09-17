@@ -8,7 +8,8 @@
  */
 
 import { useEffect, useState } from 'react';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import ErrorBoundary from './components/common/ErrorBoundary';
 import Sidebar from './components/layout/Sidebar';
 import Topbar from './components/layout/Topbar';
 import AttributionFooter from './components/layout/AttributionFooter';
@@ -53,6 +54,8 @@ function Shell() {
     setUnauthenticatedHandler(() => setSessionExpired(true));
   }, []);
 
+  const location = useLocation();
+
   const me = useQuery<Me>('me', () => api.me(), { staleTime: 5 * 60_000 });
   const meta = useQuery<JobMeta>('jobs:meta', () => api.jobs.meta(), { staleTime: 5_000, pollMs: 10_000 });
   const stats = useQuery('leads:stats', () => api.leads.stats(), { staleTime: 5_000, pollMs: 30_000 });
@@ -71,7 +74,12 @@ function Shell() {
           cashGuardMicro={CASH_GUARD_MICRO}
         />
         <main className="flex-1 overflow-y-auto p-4" data-component="page-content">
-          <Routes>
+          {/* Keyed by path: navigating away remounts the boundary and clears the
+              error, so a broken page is escapable by clicking the sidebar rather
+              than only by reloading the whole app. The chrome stays mounted, so
+              the operator keeps the navigation and the build stamp. */}
+          <ErrorBoundary key={location.pathname} where={location.pathname}>
+            <Routes>
             <Route path="/" element={<OverviewPage />} />
             <Route path="/leads" element={<LeadsPage />} />
             <Route path="/leads/:id" element={<LeadDetailPage />} />
@@ -85,7 +93,8 @@ function Shell() {
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/overview" element={<Navigate to="/" replace />} />
             <Route path="*" element={<NotFoundPage />} />
-          </Routes>
+            </Routes>
+          </ErrorBoundary>
           <AttributionFooter />
         </main>
       </div>
