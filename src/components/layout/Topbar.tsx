@@ -10,7 +10,7 @@
  */
 
 import { Link } from 'react-router-dom';
-import { isDemoMode } from '../../lib/api';
+import { BUILD_SHA, isDemoMode } from '../../lib/api';
 import { formatMicro } from '../../lib/format';
 import type { JobMeta, Me } from '../../lib/types';
 
@@ -35,7 +35,7 @@ export default function Topbar({ me, meta, mtdCostMicro, budgetMicro, cashGuardM
         {isDemoMode ? (
           <span
             data-component="demo-chip"
-            title="No VITE_API_BASE is configured, so this console is reading bundled fixtures"
+            title="VITE_API_MODE is not 'live', so this console is reading bundled fixtures"
             className="rounded border border-amber-500/30 bg-amber-500/15 px-1.5 py-0.5 text-[10px] font-medium text-amber-400"
           >
             Demo data
@@ -43,6 +43,13 @@ export default function Topbar({ me, meta, mtdCostMicro, budgetMicro, cashGuardM
         ) : null}
         <span className="rounded border border-zinc-700 bg-zinc-800 px-1.5 py-0.5 text-[10px] font-medium text-zinc-400">
           {me?.env ?? 'local'}
+        </span>
+        <span
+          data-component="build-sha"
+          className="font-mono text-[10px] text-zinc-600"
+          title="Build stamp — the commit this bundle was built from"
+        >
+          {BUILD_SHA}
         </span>
         <Link
           to="/jobs"

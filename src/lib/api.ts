@@ -39,6 +39,9 @@ const RAW_MODE = import.meta.env.VITE_API_MODE ?? (import.meta.env.PROD ? 'live'
 const API_MODE = RAW_MODE.trim();
 export const isDemoMode = API_MODE !== 'live';
 
+/** Build stamp, shown in the topbar. Resolved at build time from the config. */
+export const BUILD_SHA: string = typeof __BUILD_SHA__ === 'string' ? __BUILD_SHA__ : 'dev';
+
 export class ApiFailure extends Error {
   readonly code: ErrorCode;
   readonly detail: ({ reason?: Reason } & Record<string, unknown>) | undefined;
