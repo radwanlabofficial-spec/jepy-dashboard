@@ -15,7 +15,7 @@
  * that will never ship.
  */
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { KeyRound, Lock, Plus } from 'lucide-react';
 import PageHeader from '../../components/layout/PageHeader';
 import Card from '../../components/common/Card';
@@ -221,11 +221,24 @@ function NewAccountDialog({ open, provider, onClose }: { open: boolean; provider
   const [quotaLimit, setQuotaLimit] = useState(5000);
   const [keyName, setKeyName] = useState('api_token');
   const [secret, setSecret] = useState('');
+  // The provider dropdown must actually select: the entry points pass either a
+  // pre-selected provider (pool tile), '' ("+ New account") or 'credential'
+  // (top-right "Add credential"), and none of those may leave step 1 without
+  // a provider chosen — otherwise the account is never created and the server
+  // answers E_VALIDATION on an empty account_label.
+  const [selectedProvider, setSelectedProvider] = useState('');
+  useEffect(() => {
+    if (open) {
+      setSelectedProvider(provider === 'credential' ? '' : provider);
+      setStep(1);
+      setSecret('');
+    }
+  }, [open, provider]);
 
   const createAccount = useMutation(api.providers.createAccount, { invalidatePrefix: 'vault:' });
-  const nextLabel = useQuery(`providers:next-label:${provider}`, () => api.providers.nextLabel(provider), {
+  const nextLabel = useQuery(`providers:next-label:${selectedProvider}`, () => api.providers.nextLabel(selectedProvider), {
     staleTime: 60_000,
-    enabled: open && provider !== '' && provider !== 'credential',
+    enabled: open && selectedProvider !== '',
   });
   const createCredential = useMutation(api.vault.create, {
     invalidatePrefix: 'vault:',
@@ -244,7 +257,7 @@ function NewAccountDialog({ open, provider, onClose }: { open: boolean; provider
   return (
     <Dialog
       open={open}
-      title={provider === 'credential' ? 'Add credential' : `New account — ${provider}`}
+      title={provider === 'credential' ? 'Add credential' : `New account — ${selectedProvider || '…'}`}
       onClose={onClose}
       width="md"
       step={{ current: step, total: 2 }}
@@ -257,13 +270,10 @@ function NewAccountDialog({ open, provider, onClose }: { open: boolean; provider
             <Button
               variant="primary"
               loading={createAccount.loading}
+              disabled={selectedProvider === '' || resolvedLabel === ''}
               onClick={async () => {
-                if (provider === 'credential') {
-                  setStep(2);
-                  return;
-                }
                 const created = await createAccount.run({
-                  provider,
+                  provider: selectedProvider,
                   account_label: resolvedLabel,
                   quota_limit: quotaLimit,
                   quota_period: quotaPeriod,
@@ -271,7 +281,7 @@ function NewAccountDialog({ open, provider, onClose }: { open: boolean; provider
                 if (created) setStep(2);
               }}
             >
-              {provider === 'credential' ? 'Next' : 'Create account'}
+              Create account
             </Button>
           </>
         ) : (
@@ -297,8 +307,8 @@ function NewAccountDialog({ open, provider, onClose }: { open: boolean; provider
             <span className="text-[10px] uppercase tracking-wide text-zinc-500">Provider</span>
             <select
               className="h-7 w-full rounded-md border border-zinc-700 bg-zinc-800 px-2 text-[13px] text-zinc-100 focus-visible:ring-1 focus-visible:ring-green-400"
-              value={provider === 'credential' ? '' : provider}
-              onChange={() => undefined}
+              value={selectedProvider}
+              onChange={(event) => setSelectedProvider(event.target.value)}
             >
               <option value="">choose a provider</option>
               {/* Yelp is absent on purpose: one account, forever. */}
