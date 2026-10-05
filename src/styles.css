@@ -33,13 +33,13 @@
   --dur-short: 220ms;
   --dur-long: 420ms;
 
-  /* Sidebar (dark navy command deck) */
-  --side: #0a0f1e;
-  --side-2: #070c18;
-  --side-border: rgba(255,255,255,.07);
-  --side-text: #e2e8f0;
-  --side-text-2: #94a3b8;
-  --side-text-3: #475569;
+  /* Sidebar (light in light mode, dark in night-ops) */
+  --side: #ffffff;
+  --side-2: #f4f7f4;
+  --side-border: #e2e9e2;
+  --side-text: #0d1810;
+  --side-text-2: #4c5b51;
+  --side-text-3: #6f7d6f;
 
   /* Content (light canvas) */
   --bg: #f2f4f1;
@@ -49,7 +49,7 @@
   --border-soft: #ebf0eb;
   --text: #0d1810;
   --text-2: #4c5b51;
-  --text-3: #97a597;
+  --text-3: #6f7d6f;
 
   /* Accents */
   --emerald: #10b981;
@@ -84,6 +84,12 @@
 
 /* Night Ops (full dark canvas) */
 body.night-ops {
+  --side: #0a0f1e;
+  --side-2: #070c18;
+  --side-border: rgba(255,255,255,.07);
+  --side-text: #e2e8f0;
+  --side-text-2: #94a3b8;
+  --side-text-3: #475569;
   --bg: #0a0f1e;
   --panel: #111827;
   --bg-hover: #1a2436;
@@ -208,14 +214,20 @@ body.sb-collapsed .jepy-sidebar .brand-mark {
   overflow: hidden;
 }
 .jepy-nav-item:hover {
-  background: rgba(255,255,255,.06);
+  background: var(--bg-hover);
   color: var(--side-text);
   transform: translateX(2px);
 }
+body.night-ops .jepy-nav-item:hover {
+  background: rgba(255,255,255,.06);
+}
 .jepy-nav-item.nav-active {
   background: linear-gradient(135deg, rgba(16,185,129,.18), rgba(16,185,129,.08));
-  color: #fff;
+  color: var(--emerald-deep);
   box-shadow: inset 2px 0 0 var(--emerald), 0 4px 14px rgba(16,185,129,.15);
+}
+body.night-ops .jepy-nav-item.nav-active {
+  color: #fff;
 }
 .jepy-nav-item svg {
   flex-shrink: 0;
