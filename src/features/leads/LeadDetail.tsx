@@ -80,13 +80,13 @@ export default function LeadDetailPage() {
   const yelpAllowed = (record?.rule_score ?? 0) >= YELP_RULE_SCORE_FLOOR;
 
   if (lead.loading && !record) {
-    return <div className="h-40 animate-pulse rounded-md border border-zinc-800 bg-zinc-900" />;
+    return <div className="h-40 animate-pulse rounded-md border border-[var(--border)] bg-[var(--panel)]" />;
   }
 
   if (error && !record) {
     return (
       <div className="space-y-3">
-        <Link to="/leads" className="inline-flex items-center gap-1.5 text-[13px] text-zinc-400 hover:text-zinc-100">
+        <Link to="/leads" className="inline-flex items-center gap-1.5 text-[13px] text-[var(--text-3)] hover:text-[var(--text)]">
           <ArrowLeft size={12} aria-hidden="true" /> back to Leads
         </Link>
         <ErrorState error={error} onRetry={lead.refetch} />
@@ -97,7 +97,7 @@ export default function LeadDetailPage() {
   return (
     <div data-component="lead-detail-page" className="space-y-4">
       <div>
-        <Link to="/leads" className="inline-flex items-center gap-1.5 text-[13px] text-zinc-400 transition-colors duration-150 hover:text-zinc-100">
+        <Link to="/leads" className="inline-flex items-center gap-1.5 text-[13px] text-[var(--text-3)] transition-colors duration-150 hover:text-[var(--text)]">
           <ArrowLeft size={12} aria-hidden="true" /> back to Leads
         </Link>
       </div>
@@ -105,7 +105,7 @@ export default function LeadDetailPage() {
       <PageHeader
         title={record?.name ?? 'Lead'}
         description={
-          <span className="font-mono text-[10px] text-zinc-500">
+          <span className="font-mono text-[10px] text-[var(--text-3)]">
             {record?.id} · {record?.domain ?? 'no website'} · {record?.city ?? '—'} · {record?.country_code}
           </span>
         }
@@ -148,7 +148,7 @@ export default function LeadDetailPage() {
             </span>
           </Tooltip>
         ) : null}
-        <span className="text-[10px] text-zinc-500">
+        <span className="text-[10px] text-[var(--text-3)]">
           updated <span title={formatUtc(record?.updated_at ?? null)}>{relativeTime(record?.updated_at ?? null)}</span>
         </span>
       </div>
@@ -173,7 +173,7 @@ export default function LeadDetailPage() {
                 ['lawful_basis', record?.lawful_basis],
               ] as [string, string | null | undefined][]).map(([field, value]) => (
                 <div key={field} className="flex items-center justify-between gap-3 py-1.5">
-                  <dt className="font-mono text-[10px] uppercase tracking-wide text-zinc-500">{field}</dt>
+                  <dt className="font-mono text-[10px] uppercase tracking-wide text-[var(--text-3)]">{field}</dt>
                   <dd className="min-w-0 flex-1 text-right">
                     {editing === field ? (
                       <span className="flex items-center justify-end gap-1.5">
@@ -181,7 +181,7 @@ export default function LeadDetailPage() {
                           autoFocus
                           value={draft}
                           onChange={(event) => setDraft(event.target.value)}
-                          className="h-7 w-full max-w-[280px] rounded-md border border-zinc-700 bg-zinc-800 px-2 text-[13px] text-zinc-100 focus-visible:ring-1 focus-visible:ring-green-400"
+                          className="h-7 w-full max-w-[280px] rounded-md border border-[var(--border)] bg-[var(--panel)] px-3 text-[13px] text-[var(--text)] focus-visible:ring-1 focus-visible:ring-green-400"
                         />
                         <Button variant="secondary" onClick={() => void patch.run({ [field]: draft })} disabled={patch.loading}>
                           Save
@@ -197,9 +197,9 @@ export default function LeadDetailPage() {
                           setEditing(field);
                           setDraft(value ?? '');
                         }}
-                        className="max-w-full truncate text-[13px] text-zinc-100 underline decoration-zinc-700 underline-offset-2 transition-colors duration-150 hover:text-green-400"
+                        className="max-w-full truncate text-[13px] text-[var(--text)] underline decoration-zinc-700 underline-offset-2 transition-colors duration-150 hover:text-green-400"
                       >
-                        {value ?? <span className="font-mono text-zinc-500">—</span>}
+                        {value ?? <span className="font-mono text-[var(--text-3)]">—</span>}
                       </button>
                     )}
                   </dd>
@@ -211,28 +211,28 @@ export default function LeadDetailPage() {
           <div className="space-y-3">
             <Card title="Yelp verification" subtitle={`exactly one account · cached 24h · rule score ≥ ${YELP_RULE_SCORE_FLOOR}`}>
               {yelp ? (
-                <div className="space-y-2 rounded-md border border-zinc-800 bg-zinc-950/40 p-3">
-                  <p className="flex items-center gap-1.5 text-[10px] uppercase tracking-wide text-zinc-500">
+                <div className="space-y-2 rounded-md border border-[var(--border)] bg-[var(--bg-hover)] p-3">
+                  <p className="flex items-center gap-1.5 text-[10px] uppercase tracking-wide text-[var(--text-3)]">
                     Live from Yelp · cached 24h
                   </p>
-                  <p className="text-[13px] text-zinc-100">
+                  <p className="text-[13px] text-[var(--text)]">
                     {yelp.rating.toFixed(1)} ★ · {formatNumber(yelp.review_count)} reviews · {yelp.categories.join(', ')}
                   </p>
                   <a
                     href={yelp.business_url}
                     target="_blank"
                     rel="noreferrer noopener"
-                    className="inline-flex items-center gap-1.5 text-[13px] text-zinc-400 underline decoration-zinc-700 underline-offset-2 hover:text-zinc-100"
+                    className="inline-flex items-center gap-1.5 text-[13px] text-[var(--text-3)] underline decoration-zinc-700 underline-offset-2 hover:text-[var(--text)]"
                   >
                     Yelp business page <ExternalLink size={11} aria-hidden="true" />
                   </a>
-                  <p className="text-[10px] text-zinc-500">
+                  <p className="text-[10px] text-[var(--text-3)]">
                     Yelp content stays in this block. It is never merged into the lead&apos;s own fields and never
                     included in an export.
                   </p>
                 </div>
               ) : (
-                <p className="text-[13px] text-zinc-500">
+                <p className="text-[13px] text-[var(--text-3)]">
                   {yelpAllowed
                     ? 'Not verified yet. Verification needs a rule score of at least 55, which this lead has.'
                     : `Not available: this lead's rule score is below the floor of ${YELP_RULE_SCORE_FLOOR}.`}
@@ -244,8 +244,8 @@ export default function LeadDetailPage() {
               <ul className="divide-y divide-zinc-800">
                 {(provenance.data ?? []).map((entry) => (
                   <li key={entry.field} className="flex items-center justify-between gap-3 py-1.5">
-                    <span className="font-mono text-[13px] text-zinc-100">{entry.field}</span>
-                    <span className="min-w-0 flex-1 truncate text-right text-[10px] text-zinc-500">
+                    <span className="font-mono text-[13px] text-[var(--text)]">{entry.field}</span>
+                    <span className="min-w-0 flex-1 truncate text-right text-[10px] text-[var(--text-3)]">
                       {entry.source} · {entry.src}
                     </span>
                   </li>
@@ -267,12 +267,12 @@ export default function LeadDetailPage() {
         >
           <table className="w-full">
             <thead>
-              <tr className="bg-zinc-900">
+              <tr className="bg-[var(--panel)]">
                 {['Signal', 'Collected', 'Expires', 'Weight', 'Contribution'].map((header, index) => (
                   <th
                     key={header}
                     scope="col"
-                    className={`px-3 py-1.5 text-[10px] uppercase tracking-wide text-zinc-400 border-b border-zinc-800 ${index > 2 ? 'text-right' : 'text-left'}`}
+                    className={`px-3 py-1.5 text-[10px] uppercase tracking-wide text-[var(--text-3)] border-b border-[var(--border)] ${index > 2 ? 'text-right' : 'text-left'}`}
                   >
                     {header}
                   </th>
@@ -281,19 +281,19 @@ export default function LeadDetailPage() {
             </thead>
             <tbody>
               {(breakdown.data?.signals ?? []).map((signal) => (
-                <tr key={signal.id} className="border-b border-zinc-800">
+                <tr key={signal.id} className="border-b border-[var(--border)]">
                   <td className="px-3 py-1.5">
                     <span className="flex items-center gap-2">
-                      <span className="text-[13px] text-zinc-100">{signal.label}</span>
+                      <span className="text-[13px] text-[var(--text)]">{signal.label}</span>
                       {signal.expired === 1 ? <StatusPill status="disabled" label="expired" title="Expired signals are excluded from the score" /> : null}
                     </span>
-                    <span className="font-mono text-[10px] text-zinc-500">{signal.signal_key}</span>
+                    <span className="font-mono text-[10px] text-[var(--text-3)]">{signal.signal_key}</span>
                   </td>
                   <td className="px-3 py-1.5 text-[13px]" title={formatUtc(signal.collected_at)}>
                     {formatTime(signal.collected_at)}
                   </td>
                   <td className="px-3 py-1.5 text-[13px]" title={signal.expires_at ? formatUtc(signal.expires_at) : 'no expiry'}>
-                    {signal.expires_at ? formatTime(signal.expires_at) : <span className="font-mono text-zinc-500">—</span>}
+                    {signal.expires_at ? formatTime(signal.expires_at) : <span className="font-mono text-[var(--text-3)]">—</span>}
                   </td>
                   <td className="px-3 py-1.5 text-right">
                     <Num value={signal.weight} format={(value) => value.toFixed(2)} />
@@ -306,7 +306,7 @@ export default function LeadDetailPage() {
               ))}
             </tbody>
           </table>
-          <p className="mt-2 text-[10px] text-zinc-500">
+          <p className="mt-2 text-[10px] text-[var(--text-3)]">
             An expired signal keeps its row and shows “expired”; it is greyed rather than deleted so the operator can
             see that the score moved because the evidence aged out, not because the business changed.
           </p>
@@ -318,25 +318,25 @@ export default function LeadDetailPage() {
           <Card title="Score" subtitle={breakdown.data ? `score_version ${breakdown.data.score_version} · weights_version ${breakdown.data.weights_version}` : undefined}>
             <div className="space-y-3">
               {[
-                ['Rule score (Pass 0)', breakdown.data?.rule_score ?? null, 'text-zinc-100'],
-                ['AI score (Pass 1)', breakdown.data?.ai_score ?? null, 'text-zinc-100'],
+                ['Rule score (Pass 0)', breakdown.data?.rule_score ?? null, 'text-[var(--text)]'],
+                ['AI score (Pass 1)', breakdown.data?.ai_score ?? null, 'text-[var(--text)]'],
                 ['Final score', breakdown.data?.final_score ?? null, 'text-green-400'],
               ].map(([label, value, tone]) => (
                 <div key={String(label)} className="flex items-center justify-between gap-3">
-                  <span className="text-[13px] text-zinc-400">{label}</span>
+                  <span className="text-[13px] text-[var(--text-3)]">{label}</span>
                   <Num value={value as number | null} className={`text-base ${tone as string}`} />
                 </div>
               ))}
-              <div className="rounded-md border border-zinc-800 bg-zinc-950/40 p-2 text-[10px] text-zinc-500">
+              <div className="rounded-md border border-[var(--border)] bg-[var(--bg-hover)] p-2 text-[10px] text-[var(--text-3)]">
                 {breakdown.data?.gate_reason}
               </div>
             </div>
           </Card>
           <Card title="Pass 1 reasoning" subtitle="AI output is advisory, never the only signal">
-            <p className="text-[13px] leading-relaxed text-zinc-100">{breakdown.data?.ai_reason ?? 'Not scored by Pass 1 yet.'}</p>
+            <p className="text-[13px] leading-relaxed text-[var(--text)]">{breakdown.data?.ai_reason ?? 'Not scored by Pass 1 yet.'}</p>
             {breakdown.data?.ai_angle ? (
-              <p className="mt-2 text-[13px] leading-relaxed text-zinc-400">
-                <span className="text-[10px] uppercase tracking-wide text-zinc-500">angle · </span>
+              <p className="mt-2 text-[13px] leading-relaxed text-[var(--text-3)]">
+                <span className="text-[10px] uppercase tracking-wide text-[var(--text-3)]">angle · </span>
                 {breakdown.data.ai_angle}
               </p>
             ) : null}
@@ -351,11 +351,11 @@ export default function LeadDetailPage() {
               <li key={entry.id} className="flex items-start gap-3">
                 <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-700" aria-hidden="true" />
                 <div className="min-w-0 flex-1">
-                  <p className="text-[13px] text-zinc-100">
-                    <span className="font-mono text-[10px] uppercase tracking-wide text-zinc-500">{entry.action}</span>{' '}
+                  <p className="text-[13px] text-[var(--text)]">
+                    <span className="font-mono text-[10px] uppercase tracking-wide text-[var(--text-3)]">{entry.action}</span>{' '}
                     {entry.detail}
                   </p>
-                  <p className="text-[10px] text-zinc-500" title={formatUtc(entry.at)}>
+                  <p className="text-[10px] text-[var(--text-3)]" title={formatUtc(entry.at)}>
                     {entry.actor} · {relativeTime(entry.at)}
                   </p>
                 </div>
