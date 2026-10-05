@@ -50,12 +50,12 @@ export default function ScoringPage() {
   const error = useErrorMessage(weights.error ?? history.error ?? usage.error ?? newVersion.error ?? rescore.error);
 
   const weightColumns: Column<WeightRow>[] = [
-    { key: 'signal', header: 'Signal', width: '24%', render: (row) => <span className="font-mono text-[13px] text-zinc-100">{row.signal_key}</span> },
-    { key: 'label', header: 'Meaning', width: '30%', render: (row) => <span className="text-zinc-400">{row.label}</span> },
-    { key: 'weight', header: 'Weight', align: 'right', width: '12%', render: (row) => <Num value={row.weight} format={(value) => value.toFixed(2)} className="text-zinc-100" /> },
+    { key: 'signal', header: 'Signal', width: '24%', render: (row) => <span className="font-mono text-[13px] text-[var(--text)]">{row.signal_key}</span> },
+    { key: 'label', header: 'Meaning', width: '30%', render: (row) => <span className="text-[var(--text-3)]">{row.label}</span> },
+    { key: 'weight', header: 'Weight', align: 'right', width: '12%', render: (row) => <Num value={row.weight} format={(value) => value.toFixed(2)} className="text-[var(--text)]" /> },
     { key: 'version', header: 'Version', align: 'right', width: '10%', render: (row) => <Num value={row.weights_version} format={(value) => `v${value}`} /> },
     { key: 'sample', header: 'Sample', align: 'right', width: '10%', render: (row) => <Num value={row.sample_size} format={formatNumber} /> },
-    { key: 'updated', header: 'Updated', align: 'right', width: '14%', render: (row) => <span className="text-[10px] text-zinc-500" title={formatUtc(row.updated_at)}>{relativeTime(row.updated_at)}</span> },
+    { key: 'updated', header: 'Updated', align: 'right', width: '14%', render: (row) => <span className="text-[10px] text-[var(--text-3)]" title={formatUtc(row.updated_at)}>{relativeTime(row.updated_at)}</span> },
   ];
 
   return (
@@ -98,21 +98,21 @@ export default function ScoringPage() {
             {(history.data ?? []).map((point) => (
               <li key={`${point.week_key}-${point.signal_key}`} className="flex items-center justify-between gap-3 py-1.5">
                 <div className="min-w-0">
-                  <p className={`truncate text-[13px] ${point.applied === 1 ? 'text-zinc-100' : 'text-zinc-500'}`}>
+                  <p className={`truncate text-[13px] ${point.applied === 1 ? 'text-[var(--text)]' : 'text-[var(--text-3)]'}`}>
                     {point.signal_key}
                   </p>
-                  <p className="font-mono text-[10px] text-zinc-500">
+                  <p className="font-mono text-[10px] text-[var(--text-3)]">
                     {point.week_key} · sample {formatNumber(point.sample_size)}
                   </p>
                 </div>
                 <div className="flex shrink-0 items-center gap-2">
-                  <Num value={point.lift} format={(value) => `×${value.toFixed(2)}`} className={point.applied === 1 ? 'text-zinc-100' : 'text-zinc-500'} />
+                  <Num value={point.lift} format={(value) => `×${value.toFixed(2)}`} className={point.applied === 1 ? 'text-[var(--text)]' : 'text-[var(--text-3)]'} />
                   <StatusPill status={point.applied === 1 ? 'ok' : 'disabled'} label={point.applied === 1 ? 'applied' : 'not applied'} />
                 </div>
               </li>
             ))}
           </ul>
-          <p className="mt-2 text-[10px] text-zinc-500">
+          <p className="mt-2 text-[10px] text-[var(--text-3)]">
             A large lift on a dozen records is noise, so it is shown but not applied — the clamp is {WEIGHT_MIN}–{WEIGHT_MAX}.
           </p>
         </Card>
@@ -120,13 +120,13 @@ export default function ScoringPage() {
         <Card
           title="AI usage"
           subtitle={usage.data ? `${formatNumber(usage.data.requests_today)} of ${formatNumber(usage.data.daily_cap)} today · ${formatNumber(usage.data.requests_mtd)} month-to-date` : undefined}
-          action={<Link to="/settings" className="text-[13px] text-zinc-400 hover:text-zinc-100">cap setting</Link>}
+          action={<Link to="/settings" className="text-[13px] text-[var(--text-3)] hover:text-[var(--text)]">cap setting</Link>}
         >
           <table className="w-full">
             <thead>
               <tr>
                 {['Account', 'Requests', 'Share', 'Cost'].map((header, index) => (
-                  <th key={header} scope="col" className={`pb-1 text-[10px] uppercase tracking-wide text-zinc-400 ${index === 0 ? 'text-left' : 'text-right'}`}>
+                  <th key={header} scope="col" className={`pb-1 text-[10px] uppercase tracking-wide text-[var(--text-3)] ${index === 0 ? 'text-left' : 'text-right'}`}>
                     {header}
                   </th>
                 ))}
@@ -134,16 +134,16 @@ export default function ScoringPage() {
             </thead>
             <tbody>
               {(usage.data?.by_account ?? []).map((row) => (
-                <tr key={row.account_label} className="border-t border-zinc-800">
-                  <td className="py-1.5 font-mono text-[13px] text-zinc-100">{row.account_label}</td>
+                <tr key={row.account_label} className="border-t border-[var(--border)]">
+                  <td className="py-1.5 font-mono text-[13px] text-[var(--text)]">{row.account_label}</td>
                   <td className="py-1.5 text-right"><Num value={row.requests} format={formatNumber} /></td>
-                  <td className="py-1.5 text-right"><Num value={row.share_pct} format={(value) => `${value.toFixed(0)}%`} className="text-zinc-400" /></td>
-                  <td className="py-1.5 text-right"><Num value={row.cost_micro} format={(value) => formatMicro(value)} className="text-zinc-400" /></td>
+                  <td className="py-1.5 text-right"><Num value={row.share_pct} format={(value) => `${value.toFixed(0)}%`} className="text-[var(--text-3)]" /></td>
+                  <td className="py-1.5 text-right"><Num value={row.cost_micro} format={(value) => formatMicro(value)} className="text-[var(--text-3)]" /></td>
                 </tr>
               ))}
             </tbody>
           </table>
-          <p className="mt-2 text-[10px] text-zinc-500">
+          <p className="mt-2 text-[10px] text-[var(--text-3)]">
             Per-account rows come from the API rather than being hard-coded, because the account pool grows without a
             deploy.
           </p>
@@ -177,13 +177,13 @@ export default function ScoringPage() {
         }
       >
         <div className="space-y-2">
-          <p className="text-[13px] text-zinc-400">
+          <p className="text-[13px] text-[var(--text-3)]">
             Previous versions stay in place, so any score can be explained later and any change can be rolled back. Weights
             outside {WEIGHT_MIN}–{WEIGHT_MAX} are refused inline.
           </p>
           {(weights.data ?? []).map((row) => (
-            <label key={row.signal_key} className="flex items-center justify-between gap-3 border-b border-zinc-800 py-1.5 last:border-0">
-              <span className="font-mono text-[13px] text-zinc-100">{row.signal_key}</span>
+            <label key={row.signal_key} className="flex items-center justify-between gap-3 border-b border-[var(--border)] py-1.5 last:border-0">
+              <span className="font-mono text-[13px] text-[var(--text)]">{row.signal_key}</span>
               <input
                 type="number"
                 step="0.01"
@@ -191,7 +191,7 @@ export default function ScoringPage() {
                 max={WEIGHT_MAX}
                 value={draft[row.signal_key] ?? row.weight}
                 onChange={(event) => setDraft({ ...draft, [row.signal_key]: Number(event.target.value) })}
-                className="h-7 w-28 rounded-md border border-zinc-700 bg-zinc-800 px-2 font-mono text-[13px] text-zinc-100 focus-visible:ring-1 focus-visible:ring-green-400"
+                className="h-7 w-28 rounded-md border border-[var(--border)] bg-[var(--panel)] px-3 font-mono text-[13px] text-[var(--text)] focus-visible:ring-1 focus-visible:ring-green-400"
               />
             </label>
           ))}
