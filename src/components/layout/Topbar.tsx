@@ -117,13 +117,12 @@ export default function Topbar({ me, meta, mtdCostMicro, budgetMicro, cashGuardM
         {nightOps ? <Sun size={17} aria-hidden="true" /> : <Moon size={17} aria-hidden="true" />}
       </button>
 
-      <div className="date-pill flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--panel)] px-3.5 py-2 shadow-[var(--shadow)]">
-        <span className="live relative flex h-2 w-2" aria-hidden="true">
+      <div className="date-pill flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--panel)] px-2.5 py-1.5 shadow-[var(--shadow)]" title={`${dateStr} ${timeStr}`}>
+        <span className="relative flex h-1.5 w-1.5" aria-hidden="true">
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
-          <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
         </span>
-        <span className="text-[12px] font-semibold text-[var(--text)]">{dateStr}</span>
-        <span className="font-mono text-[11px] tabular-nums text-[var(--text-3)]">{timeStr}</span>
+        <span className="whitespace-nowrap text-[11px] font-medium text-[var(--text-3)]">{dateStr} · {timeStr}</span>
       </div>
 
       <button
