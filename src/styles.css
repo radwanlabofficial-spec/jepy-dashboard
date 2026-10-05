@@ -186,11 +186,11 @@ body.sb-collapsed .jepy-sidebar {
   object-fit: contain;
   display: block;
 }
-/* Dark pill behind the logo in light mode so the white gradient stays visible */
+/* Teal pill behind the logo in light mode — shows both white and green parts of the gradient */
 .jepy-sidebar .brand-pill {
   display: inline-flex;
   align-items: center;
-  background: #0b1122;
+  background: #0d9488;
   border-radius: 10px;
   padding: 5px 10px;
   line-height: 0;
@@ -267,6 +267,11 @@ body.sb-collapsed .nav-label {
   max-width: 0;
   opacity: 0;
   overflow: hidden;
+}
+/* Hide keyboard hints entirely in collapsed mode — icons alone are cleaner.
+   NavLink title attr provides the hover tooltip with the page name. */
+body.sb-collapsed .jepy-nav-item .nav-kbd {
+  display: none;
 }
 
 /* LIVE OPS section */
