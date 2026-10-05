@@ -181,21 +181,45 @@ body.sb-collapsed .jepy-sidebar {
 }
 
 .jepy-sidebar .brand-logo {
-  height: 32px;
-  max-width: 140px;
+  height: 28px;
+  max-width: 120px;
   object-fit: contain;
+  display: block;
 }
-body.sb-collapsed .jepy-sidebar .brand-logo {
+/* Dark pill behind the logo in light mode so the white gradient stays visible */
+.jepy-sidebar .brand-pill {
+  display: inline-flex;
+  align-items: center;
+  background: #0b1122;
+  border-radius: 10px;
+  padding: 5px 10px;
+  line-height: 0;
+}
+body.night-ops .jepy-sidebar .brand-pill {
+  background: transparent;
+  padding: 0;
+}
+body.sb-collapsed .jepy-sidebar .brand-logo,
+body.sb-collapsed .jepy-sidebar .brand-pill {
   display: none;
 }
+/* Collapsed rail mark: simple gradient "J" (favicon stays browser-tab-only) */
 .jepy-sidebar .brand-mark {
   display: none;
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 800;
+  font-family: var(--disp);
+  color: #07130a;
+  background: linear-gradient(135deg, #7ed321 0%, #10b981 100%);
+  box-shadow: 0 4px 14px rgba(126, 211, 33, 0.35);
 }
 body.sb-collapsed .jepy-sidebar .brand-mark {
-  display: block;
+  display: inline-flex;
 }
 
 /* Nav items */
