@@ -114,12 +114,12 @@ export default function SourcesPage() {
           <button
             type="button"
             onClick={() => patchDirectory.run(source.source_key, { enabled: source.enabled === 1 ? 0 : 1 })}
-            className="block truncate text-left text-zinc-100 underline decoration-zinc-700 underline-offset-2 transition-colors duration-150 hover:text-green-400"
+            className="block truncate text-left text-[var(--text)] underline decoration-zinc-700 underline-offset-2 transition-colors duration-150 hover:text-green-400"
             title="Toggle enabled"
           >
             {source.display_name}
           </button>
-          <span className="font-mono text-[10px] text-zinc-500">{source.source_key}</span>
+          <span className="font-mono text-[10px] text-[var(--text-3)]">{source.source_key}</span>
         </div>
       ),
     },
@@ -133,7 +133,7 @@ export default function SourcesPage() {
       render: (source) => (
         <button
           type="button"
-          className="font-mono text-[13px] text-zinc-100 underline decoration-zinc-700 underline-offset-2 transition-colors duration-150 hover:text-green-400"
+          className="font-mono text-[13px] text-[var(--text)] underline decoration-zinc-700 underline-offset-2 transition-colors duration-150 hover:text-green-400"
           onClick={() => {
             setPackSource(source.source_key);
             setTab('packs');
@@ -144,7 +144,7 @@ export default function SourcesPage() {
       ),
     },
     { key: 'rate', header: 'Rate', align: 'right', width: '8%', render: (source) => <Num value={source.rate_limit_rpm} unit="rpm" /> },
-    { key: 'last_ok', header: 'Last OK', align: 'right', width: '10%', render: (source) => <span className="text-[10px] text-zinc-500">{relativeTime(source.last_ok_at)}</span> },
+    { key: 'last_ok', header: 'Last OK', align: 'right', width: '10%', render: (source) => <span className="text-[10px] text-[var(--text-3)]">{relativeTime(source.last_ok_at)}</span> },
     { key: 'enabled', header: 'Enabled', width: '8%', render: (source) => <StatusPill status={source.enabled === 1 ? 'active' : 'disabled'} label={source.enabled === 1 ? 'on' : 'off'} /> },
     {
       key: 'actions',
@@ -175,13 +175,13 @@ export default function SourcesPage() {
   ];
 
   const packColumns: Column<SelectorPack>[] = [
-    { key: 'source', header: 'Source', width: '14%', render: (pack) => <span className="font-mono text-[13px] text-zinc-100">{pack.source_key}</span> },
+    { key: 'source', header: 'Source', width: '14%', render: (pack) => <span className="font-mono text-[13px] text-[var(--text)]">{pack.source_key}</span> },
     { key: 'version', header: 'Version', align: 'right', width: '8%', render: (pack) => <Num value={pack.version} format={(value) => `v${value}`} /> },
     { key: 'status', header: 'Status', width: '10%', render: (pack) => <StatusPill status={pack.status} /> },
-    { key: 'origin', header: 'Origin', width: '10%', render: (pack) => <span className="text-zinc-400">{pack.generated_by}</span> },
+    { key: 'origin', header: 'Origin', width: '10%', render: (pack) => <span className="text-[var(--text-3)]">{pack.generated_by}</span> },
     { key: 'fields', header: 'Fields', align: 'right', width: '7%', render: (pack) => <Num value={pack.field_count} /> },
     { key: 'success', header: 'Success', align: 'right', width: '9%', render: (pack) => <Num value={pack.success_rate === null ? null : pack.success_rate * 100} format={(value) => `${value.toFixed(1)}%`} /> },
-    { key: 'runs', header: 'Runs', align: 'right', width: '8%', render: (pack) => <span className="font-mono tabular-nums text-zinc-400">{formatNumber(pack.runs)} <span className="text-zinc-600">/ {formatNumber(pack.empty_runs)} empty</span></span> },
+    { key: 'runs', header: 'Runs', align: 'right', width: '8%', render: (pack) => <span className="font-mono tabular-nums text-[var(--text-3)]">{formatNumber(pack.runs)} <span className="text-zinc-600">/ {formatNumber(pack.empty_runs)} empty</span></span> },
     {
       key: 'actions',
       header: '',
@@ -200,7 +200,7 @@ export default function SourcesPage() {
             </Button>
           </span>
         ) : (
-          <span className="text-[10px] text-zinc-500">
+          <span className="text-[10px] text-[var(--text-3)]">
             {pack.approved_by ? `approved by ${pack.approved_by}` : 'immutable — create a new version'}
           </span>
         ),
@@ -208,9 +208,9 @@ export default function SourcesPage() {
   ];
 
   const manualColumns: Column<ManualSource>[] = [
-    { key: 'source', header: 'Source', width: '20%', render: (source) => <span className="text-zinc-100">{source.display_name}</span> },
+    { key: 'source', header: 'Source', width: '20%', render: (source) => <span className="text-[var(--text)]">{source.display_name}</span> },
     { key: 'reason', header: 'Block reason', width: '16%', render: (source) => <StatusPill status="blocked" label={source.block_reason} /> },
-    { key: 'why', header: 'Why manual', width: '34%', render: (source) => <span className="text-zinc-400">{source.why_manual}</span> },
+    { key: 'why', header: 'Why manual', width: '34%', render: (source) => <span className="text-[var(--text-3)]">{source.why_manual}</span> },
     {
       key: 'open',
       header: 'Open',
@@ -220,7 +220,7 @@ export default function SourcesPage() {
           href={source.manual_url_template}
           target="_blank"
           rel="noreferrer noopener"
-          className="inline-flex items-center gap-1.5 text-[13px] text-zinc-400 underline decoration-zinc-700 underline-offset-2 transition-colors duration-150 hover:text-zinc-100"
+          className="inline-flex items-center gap-1.5 text-[13px] text-[var(--text-3)] underline decoration-zinc-700 underline-offset-2 transition-colors duration-150 hover:text-[var(--text)]"
         >
           Open manually <ExternalLink size={11} aria-hidden="true" />
         </a>
@@ -234,7 +234,7 @@ export default function SourcesPage() {
       render: (source) =>
         source.override_ack === 1 ? (
           <Tooltip label={source.override_reason ?? 'recorded'}>
-            <span className="inline-flex items-center gap-1.5 text-[10px] text-zinc-500">
+            <span className="inline-flex items-center gap-1.5 text-[10px] text-[var(--text-3)]">
               <StatusPill status="ok" label="override recorded" />
             </span>
           </Tooltip>
@@ -247,14 +247,14 @@ export default function SourcesPage() {
   ];
 
   const importColumns: Column<ImportRun>[] = [
-    { key: 'dataset', header: 'Dataset', width: '16%', render: (run) => <span className="text-zinc-100">{run.dataset} <span className="font-mono text-[10px] text-zinc-500">{run.release_version}</span></span> },
+    { key: 'dataset', header: 'Dataset', width: '16%', render: (run) => <span className="text-[var(--text)]">{run.dataset} <span className="font-mono text-[10px] text-[var(--text-3)]">{run.release_version}</span></span> },
     { key: 'scanned', header: 'Scanned', align: 'right', width: '12%', render: (run) => <Num value={run.rows_scanned} format={formatNumber} /> },
     { key: 'ingested', header: 'Ingested', align: 'right', width: '11%', render: (run) => <Num value={run.rows_ingested} format={formatNumber} /> },
     { key: 'merged', header: 'Merged', align: 'right', width: '11%', render: (run) => <Num value={run.rows_merged} format={formatNumber} /> },
-    { key: 'skipped', header: 'Skipped', align: 'right', width: '11%', render: (run) => <Num value={run.rows_skipped} format={formatNumber} className="text-zinc-400" /> },
+    { key: 'skipped', header: 'Skipped', align: 'right', width: '11%', render: (run) => <Num value={run.rows_skipped} format={formatNumber} className="text-[var(--text-3)]" /> },
     { key: 'confidence', header: 'Min conf.', align: 'right', width: '9%', render: (run) => <Num value={run.min_confidence} format={(value) => value.toFixed(2)} /> },
     { key: 'status', header: 'Status', width: '10%', render: (run) => <StatusPill status={run.status === 'done' ? 'done' : run.status === 'running' ? 'running' : 'failed'} /> },
-    { key: 'started', header: 'Started', align: 'right', width: '10%', render: (run) => <span className="text-[10px] text-zinc-500">{relativeTime(run.started_at)}</span> },
+    { key: 'started', header: 'Started', align: 'right', width: '10%', render: (run) => <span className="text-[10px] text-[var(--text-3)]">{relativeTime(run.started_at)}</span> },
   ];
 
   return (
@@ -294,7 +294,7 @@ export default function SourcesPage() {
             subtitle={`${HEAL_MIN_RECORDS}+ records and ${HEAL_MIN_FILL_PCT}% fill are required before a draft is created; nothing self-activates`}
             action={
               <select
-                className="h-7 rounded-md border border-zinc-700 bg-zinc-800 px-2 text-[13px] text-zinc-100 focus-visible:ring-1 focus-visible:ring-green-400"
+                className="h-7 rounded-md border border-[var(--border)] bg-[var(--panel)] px-3 text-[13px] text-[var(--text)] focus-visible:ring-1 focus-visible:ring-green-400"
                 value={packSource ?? ''}
                 onChange={(event) => setPackSource(event.target.value === '' ? null : event.target.value)}
               >
@@ -307,7 +307,7 @@ export default function SourcesPage() {
               </select>
             }
           >
-            <p className="text-[10px] text-zinc-500">
+            <p className="text-[10px] text-[var(--text-3)]">
               A pack row is immutable. Editing one is refused with a conflict, so the UI does not offer an edit control;
               corrections arrive as a new version, which keeps the rollback target intact.
             </p>
@@ -326,9 +326,9 @@ export default function SourcesPage() {
             <Card title={`Version preview — ${packs.data?.[0].source_key}`} subtitle="read-only">
               <ul className="space-y-1">
                 {(packs.data?.[0].selector_preview ?? []).map((field) => (
-                  <li key={field.field} className="flex items-center justify-between gap-3 border-b border-zinc-800 py-1 last:border-0">
-                    <span className="font-mono text-[13px] text-zinc-100">{field.field}</span>
-                    <code className="truncate rounded bg-zinc-800 px-1.5 py-0.5 font-mono text-[10px] text-zinc-400">{field.selector}</code>
+                  <li key={field.field} className="flex items-center justify-between gap-3 border-b border-[var(--border)] py-1 last:border-0">
+                    <span className="font-mono text-[13px] text-[var(--text)]">{field.field}</span>
+                    <code className="truncate rounded bg-[var(--bg-hover)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--text-3)]">{field.selector}</code>
                   </li>
                 ))}
               </ul>
@@ -358,14 +358,14 @@ export default function SourcesPage() {
                 header: 'Source',
                 width: '20%',
                 render: (source) => (
-                  <span className="inline-flex items-center gap-2 text-zinc-400">
-                    <Lock size={12} className="text-zinc-500" aria-hidden="true" />
+                  <span className="inline-flex items-center gap-2 text-[var(--text-3)]">
+                    <Lock size={12} className="text-[var(--text-3)]" aria-hidden="true" />
                     {source.display_name}
                   </span>
                 ),
               },
               { key: 'reason', header: 'Block reason', width: '16%', render: (source) => <StatusPill status="blocked" label={source.block_reason} /> },
-              { key: 'why', header: 'Why it can never be opened', width: '64%', render: (source) => <span className="text-zinc-500">{source.explanation}</span> },
+              { key: 'why', header: 'Why it can never be opened', width: '64%', render: (source) => <span className="text-[var(--text-3)]">{source.explanation}</span> },
             ]}
             rows={blocked.data ?? []}
             rowKey={(source) => source.source_key}
@@ -423,14 +423,14 @@ export default function SourcesPage() {
             <Field label="Rate limit (requests / minute)">
               <input
                 type="number"
-                className="h-7 w-full rounded-md border border-zinc-700 bg-zinc-800 px-2 font-mono text-[13px] text-zinc-100 focus-visible:ring-1 focus-visible:ring-green-400"
+                className="h-7 w-full rounded-md border border-[var(--border)] bg-[var(--panel)] px-3 font-mono text-[13px] text-[var(--text)] focus-visible:ring-1 focus-visible:ring-green-400"
                 value={editing.rate_limit_rpm}
                 onChange={(event) => setEditing({ ...editing, rate_limit_rpm: Number(event.target.value) })}
               />
             </Field>
             <Field label="URL template">
               <input
-                className="h-7 w-full rounded-md border border-zinc-700 bg-zinc-800 px-2 font-mono text-[13px] text-zinc-100 focus-visible:ring-1 focus-visible:ring-green-400"
+                className="h-7 w-full rounded-md border border-[var(--border)] bg-[var(--panel)] px-3 font-mono text-[13px] text-[var(--text)] focus-visible:ring-1 focus-visible:ring-green-400"
                 value={editing.url_template ?? ''}
                 onChange={(event) => setEditing({ ...editing, url_template: event.target.value })}
               />
@@ -438,14 +438,14 @@ export default function SourcesPage() {
             <div className="grid grid-cols-3 gap-3">
               <Field label="Pagination mode">
                 <input
-                  className="h-7 w-full rounded-md border border-zinc-700 bg-zinc-800 px-2 font-mono text-[13px] text-zinc-100 focus-visible:ring-1 focus-visible:ring-green-400"
+                  className="h-7 w-full rounded-md border border-[var(--border)] bg-[var(--panel)] px-3 font-mono text-[13px] text-[var(--text)] focus-visible:ring-1 focus-visible:ring-green-400"
                   value={editing.pagination_mode ?? ''}
                   onChange={(event) => setEditing({ ...editing, pagination_mode: event.target.value })}
                 />
               </Field>
               <Field label="Param">
                 <input
-                  className="h-7 w-full rounded-md border border-zinc-700 bg-zinc-800 px-2 font-mono text-[13px] text-zinc-100 focus-visible:ring-1 focus-visible:ring-green-400"
+                  className="h-7 w-full rounded-md border border-[var(--border)] bg-[var(--panel)] px-3 font-mono text-[13px] text-[var(--text)] focus-visible:ring-1 focus-visible:ring-green-400"
                   value={editing.pagination_param ?? ''}
                   onChange={(event) => setEditing({ ...editing, pagination_param: event.target.value })}
                 />
@@ -453,13 +453,13 @@ export default function SourcesPage() {
               <Field label="Max pages">
                 <input
                   type="number"
-                  className="h-7 w-full rounded-md border border-zinc-700 bg-zinc-800 px-2 font-mono text-[13px] text-zinc-100 focus-visible:ring-1 focus-visible:ring-green-400"
+                  className="h-7 w-full rounded-md border border-[var(--border)] bg-[var(--panel)] px-3 font-mono text-[13px] text-[var(--text)] focus-visible:ring-1 focus-visible:ring-green-400"
                   value={editing.max_pages ?? 0}
                   onChange={(event) => setEditing({ ...editing, max_pages: Number(event.target.value) })}
                 />
               </Field>
             </div>
-            <p className="rounded-md border border-zinc-800 bg-zinc-950/40 p-2 text-[10px] text-zinc-500">
+            <p className="rounded-md border border-[var(--border)] bg-[var(--bg-hover)] p-2 text-[10px] text-[var(--text-3)]">
               Extraction selectors are not part of this form. They live in versioned selector packs and are approved on
               the Selector packs tab; sending one here is rejected as a validation error.
             </p>
@@ -489,14 +489,14 @@ export default function SourcesPage() {
         }
       >
         <div className="space-y-3">
-          <p className="text-[13px] text-zinc-100">
+          <p className="text-[13px] text-[var(--text)]">
             <span className="font-mono text-[10px] uppercase tracking-wide text-amber-400">{overrideFor?.block_reason}</span>{' '}
             {overrideFor?.why_manual}
           </p>
           <Field label={`Reason (minimum 20 characters — ${reason.trim().length}/20)`}>
             <textarea
               rows={3}
-              className="w-full rounded-md border border-zinc-700 bg-zinc-800 p-2 text-[13px] text-zinc-100 focus-visible:ring-1 focus-visible:ring-green-400"
+              className="w-full rounded-md border border-[var(--border)] bg-[var(--bg-hover)] p-2 text-[13px] text-[var(--text)] focus-visible:ring-1 focus-visible:ring-green-400"
               value={reason}
               onChange={(event) => setReason(event.target.value)}
             />
@@ -530,14 +530,14 @@ export default function SourcesPage() {
       >
         <div className="space-y-3">
           <Field label="Dataset">
-            <select className="h-7 w-full rounded-md border border-zinc-700 bg-zinc-800 px-2 text-[13px] text-zinc-100 focus-visible:ring-1 focus-visible:ring-green-400">
+            <select className="h-7 w-full rounded-md border border-[var(--border)] bg-[var(--panel)] px-3 text-[13px] text-[var(--text)] focus-visible:ring-1 focus-visible:ring-green-400">
               <option value="overture">overture</option>
               <option value="foursquare">foursquare</option>
               <option value="state_sos">state_sos</option>
             </select>
           </Field>
           <Field label="Geo target">
-            <select className="h-7 w-full rounded-md border border-zinc-700 bg-zinc-800 px-2 text-[13px] text-zinc-100 focus-visible:ring-1 focus-visible:ring-green-400">
+            <select className="h-7 w-full rounded-md border border-[var(--border)] bg-[var(--panel)] px-3 text-[13px] text-[var(--text)] focus-visible:ring-1 focus-visible:ring-green-400">
               <option value="GB">United Kingdom</option>
               <option value="IE">Ireland</option>
               <option value="FR">France</option>
@@ -548,26 +548,26 @@ export default function SourcesPage() {
               type="number"
               step="0.05"
               defaultValue={0.6}
-              className="h-7 w-full rounded-md border border-zinc-700 bg-zinc-800 px-2 font-mono text-[13px] text-zinc-100 focus-visible:ring-1 focus-visible:ring-green-400"
+              className="h-7 w-full rounded-md border border-[var(--border)] bg-[var(--panel)] px-3 font-mono text-[13px] text-[var(--text)] focus-visible:ring-1 focus-visible:ring-green-400"
             />
           </Field>
-          <label className="flex items-center gap-2 text-[13px] text-zinc-100">
+          <label className="flex items-center gap-2 text-[13px] text-[var(--text)]">
             <input
               type="checkbox"
               checked={dryRun}
               onChange={(event) => setDryRun(event.target.checked)}
-              className="h-3.5 w-3.5 rounded border-zinc-700 bg-zinc-800 focus-visible:ring-1 focus-visible:ring-green-400"
+              className="h-3.5 w-3.5 rounded border-[var(--border)] bg-[var(--bg-hover)] focus-visible:ring-1 focus-visible:ring-green-400"
             />
             Dry run — count what would change, write nothing
           </label>
-          <p className="text-[10px] text-zinc-500">
+          <p className="text-[10px] text-[var(--text-3)]">
             Dry run starts on. The first import of a dataset always previews: the preview states plainly that no row was
             written, so a preview can never be mistaken for an import.
           </p>
         </div>
       </Dialog>
 
-      <p className="flex items-center gap-1.5 text-[10px] text-zinc-500">
+      <p className="flex items-center gap-1.5 text-[10px] text-[var(--text-3)]">
         <Search size={11} aria-hidden="true" />
         Search starts free. Paid providers are only reached after the credential-free tiers have been exhausted.
       </p>
@@ -578,7 +578,7 @@ export default function SourcesPage() {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block space-y-1">
-      <span className="text-[10px] uppercase tracking-wide text-zinc-500">{label}</span>
+      <span className="text-[10px] uppercase tracking-wide text-[var(--text-3)]">{label}</span>
       {children}
     </label>
   );
