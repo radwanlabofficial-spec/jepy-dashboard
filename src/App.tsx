@@ -12,6 +12,7 @@ import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-route
 import ErrorBoundary from './components/common/ErrorBoundary';
 import Sidebar from './components/layout/Sidebar';
 import Topbar from './components/layout/Topbar';
+import CommandPalette from './components/CommandPalette';
 import AttributionFooter from './components/layout/AttributionFooter';
 import Button from './components/common/Button';
 import { api, setUnauthenticatedHandler } from './lib/api';
@@ -98,6 +99,7 @@ function Shell() {
           <AttributionFooter />
         </main>
       </div>
+      <CommandPalette />
     </div>
   );
 }
