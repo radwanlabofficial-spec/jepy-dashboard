@@ -7,7 +7,7 @@
  */
 
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Bell, Columns3, Menu, Moon, Search, Sun, Zap } from 'lucide-react';
 import { BUILD_SHA, isDemoMode } from '../../lib/api';
 import { formatMicro } from '../../lib/format';
@@ -34,6 +34,7 @@ function useNow() {
 export default function Topbar({ me, meta, mtdCostMicro, budgetMicro, cashGuardMicro }: TopbarProps) {
   const overGuard = mtdCostMicro !== null && mtdCostMicro >= cashGuardMicro;
   const now = useNow();
+  const navigate = useNavigate();
   const [nightOps, setNightOps] = useState(() => {
     try { return localStorage.getItem('jepy-night') === 'on'; } catch { return false; }
   });
@@ -82,7 +83,7 @@ export default function Topbar({ me, meta, mtdCostMicro, budgetMicro, cashGuardM
         className="jepy-icon-btn"
         title="Toggle sidebar ( [ )"
         aria-label="Toggle sidebar"
-        onClick={() => document.body.classList.toggle('sb-collapsed')}
+        onClick={() => window.dispatchEvent(new CustomEvent('jepy:sidebar-toggle'))}
       >
         <Menu size={17} aria-hidden="true" />
       </button>
@@ -164,12 +165,21 @@ export default function Topbar({ me, meta, mtdCostMicro, budgetMicro, cashGuardM
         </span>
       </div>
 
-      <button className="jepy-icon-btn relative" title="Notifications" aria-label="Notifications">
+      <button
+        className="jepy-icon-btn relative"
+        title="Notifications — open error log"
+        aria-label="Notifications"
+        onClick={() => navigate('/settings')}
+      >
         <Bell size={17} aria-hidden="true" />
         <span className="n-dot absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-[var(--rose)] ring-2 ring-[var(--panel)]" />
       </button>
 
-      <button className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#10b981] to-[#7ed321] px-4 py-2.5 text-[13px] font-semibold text-white shadow-[0_4px_16px_rgba(16,185,129,.35)] transition-all hover:-translate-y-px hover:shadow-[0_8px_24px_rgba(16,185,129,.45)]">
+      <button
+        className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#10b981] to-[#7ed321] px-4 py-2.5 text-[13px] font-semibold text-white shadow-[0_4px_16px_rgba(16,185,129,.35)] transition-all hover:-translate-y-px hover:shadow-[0_8px_24px_rgba(16,185,129,.45)]"
+        title="Start a new capture run"
+        onClick={() => navigate('/sources')}
+      >
         <Zap size={15} aria-hidden="true" />
         New capture
       </button>

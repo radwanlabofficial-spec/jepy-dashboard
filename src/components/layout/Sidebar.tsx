@@ -120,8 +120,14 @@ export default function Sidebar({ me, meta }: SidebarProps) {
         setCollapsed((c) => !c);
       }
     };
+    // Topbar hamburger dispatches this so both toggles share one state
+    const onToggle = () => setCollapsed((c) => !c);
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    window.addEventListener('jepy:sidebar-toggle', onToggle);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      window.removeEventListener('jepy:sidebar-toggle', onToggle);
+    };
   }, []);
 
   const queueDepth = meta?.queue_depth ?? null;

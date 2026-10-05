@@ -12,6 +12,7 @@ import { BD_DAILY_GUARD, BD_MONTHLY_PCT_LINE, POLLING } from '../../lib/constant
 import { formatMicro, formatNumber, relativeTime } from '../../lib/format';
 import { useQuery } from '../../hooks/useApi';
 import type { CreditPoint, DirectorySource, ErrorLogEntry, ImportRun, JobMeta, LeadStats, ProviderAccount } from '../../lib/types';
+import LeadStream from './LeadStream';
 
 const errorMessages: Record<string, string> = {
   E_PROVIDER_ERROR: 'provider side failure — retried automatically',
@@ -28,12 +29,15 @@ const errorMessages: Record<string, string> = {
   E_INTERNAL: 'unexpected internal failure',
 };
 
-function KpiCard({ label, children, hint, accent = 'emerald', index = 0 }: {
+import Skeleton from '../../components/common/Skeleton';
+
+function KpiCard({ label, children, hint, accent = 'emerald', index = 0, loading = false }: {
   label: string;
   children: React.ReactNode;
   hint?: string;
   accent?: 'emerald' | 'amber' | 'violet' | 'rose';
   index?: number;
+  loading?: boolean;
 }) {
   const accents = {
     emerald: 'from-[#10b981] to-[#34d399]',
@@ -49,8 +53,10 @@ function KpiCard({ label, children, hint, accent = 'emerald', index = 0 }: {
     >
       <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${accents[accent]}`} />
       <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-[var(--text-3)]">{label}</p>
-      <div className="jepy-kpi mt-2 text-[30px] leading-none text-[var(--text)]">{children}</div>
-      {hint ? <p className="mt-2 text-[11px] text-[var(--text-3)]">{hint}</p> : null}
+      <div className="jepy-kpi mt-2 text-[30px] leading-none text-[var(--text)]">
+        {loading ? <Skeleton className="h-[30px] w-24" /> : children}
+      </div>
+      {hint && !loading ? <p className="mt-2 text-[11px] text-[var(--text-3)]">{hint}</p> : null}
     </div>
   );
 }
@@ -131,7 +137,7 @@ export default function OverviewPage() {
     <div data-component="overview-page" className="space-y-6">
       {/* Hero — command deck */}
       <div
-        className="jepy-enter relative overflow-hidden rounded-[var(--radius)] p-8 text-white shadow-[var(--shadow-lg)]"
+        className="jepy-enter relative overflow-hidden rounded-[var(--radius)] p-8 pb-20 text-white shadow-[var(--shadow-lg)]"
         style={{ background: 'linear-gradient(135deg, #0b1122 0%, #131c33 50%, #0b2b1f 100%)' }}
       >
         <div
@@ -139,6 +145,10 @@ export default function OverviewPage() {
           style={{ background: 'radial-gradient(600px 200px at 80% 0%, rgba(16,185,129,.25), transparent), radial-gradient(400px 200px at 10% 100%, rgba(139,92,246,.2), transparent)' }}
           aria-hidden="true"
         />
+        <p className="absolute bottom-[68px] left-8 font-mono text-[9.5px] uppercase tracking-[0.22em] text-emerald-300/70" aria-hidden="true">
+          ● live lead stream
+        </p>
+        <LeadStream />
         <div className="relative flex flex-wrap items-center justify-between gap-6">
           <div className="max-w-xl">
             <p className="mb-2 flex items-center gap-2 text-[10.5px] font-bold uppercase tracking-[0.18em] text-emerald-300">
@@ -220,19 +230,19 @@ export default function OverviewPage() {
 
       {/* KPI grid */}
       <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
-        <KpiCard label="Total leads" hint={`${formatNumber(s?.new_today ?? null)} new today`} accent="emerald" index={0}>
+        <KpiCard label="Total leads" hint={`${formatNumber(s?.new_today ?? null)} new today`} accent="emerald" index={0} loading={stats.loading && !s}>
           {formatNumber(s?.total ?? null)}
         </KpiCard>
-        <KpiCard label="Hot leads" hint="tier HOT · ready for outreach" accent="rose" index={1}>
+        <KpiCard label="Hot leads" hint="tier HOT · ready for outreach" accent="rose" index={1} loading={stats.loading && !s}>
           <span className="flex items-center gap-2">
             {formatNumber(hotCount)}
             <Users size={16} className="text-[var(--text-3)]" aria-hidden="true" />
           </span>
         </KpiCard>
-        <KpiCard label="Queue depth" hint={meta.data ? `oldest pending ${relativeTime(Date.now() / 1000 - meta.data.oldest_pending_sec)}` : undefined} accent="violet" index={2}>
+        <KpiCard label="Queue depth" hint={meta.data ? `oldest pending ${relativeTime(Date.now() / 1000 - meta.data.oldest_pending_sec)}` : undefined} accent="violet" index={2} loading={meta.loading && !meta.data}>
           {formatNumber(meta.data?.queue_depth ?? null)}
         </KpiCard>
-        <KpiCard label="MTD spend" hint={`guard trips at ${formatMicro(60_000_000, 0)}`} accent="amber" index={3}>
+        <KpiCard label="MTD spend" hint={`guard trips at ${formatMicro(60_000_000, 0)}`} accent="amber" index={3} loading={stats.loading && !s}>
           {formatMicro(s?.mtd_cost_micro ?? null)}
         </KpiCard>
       </div>
