@@ -67,7 +67,7 @@ export default function DataTable<T>({
   dense = false,
   maxHeight,
 }: DataTableProps<T>) {
-  const cellPad = dense ? 'px-2 py-1' : 'px-3 py-1.5';
+  const cellPad = dense ? 'px-3 py-2' : 'px-4 py-3';
 
   if (error) {
     return (
@@ -82,12 +82,12 @@ export default function DataTable<T>({
       <div data-component="data-table-loading">
         <table className="w-full">
           <thead>
-            <tr className="bg-zinc-900">
+            <tr>
               {columns.map((column) => (
                 <th
                   key={column.key}
                   scope="col"
-                  className={`${cellPad} text-[10px] uppercase tracking-wide text-zinc-400 border-b border-zinc-800 ${
+                  className={`${cellPad} border-b border-[var(--border)] text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[var(--text-3)] ${
                     column.align === 'right' ? 'text-right' : 'text-left'
                   }`}
                   style={column.width ? { width: column.width } : undefined}
@@ -99,7 +99,7 @@ export default function DataTable<T>({
           </thead>
           <tbody>
             {Array.from({ length: skeletonRows }).map((_, rowIndex) => (
-              <tr key={`sk-${rowIndex}`} className="border-b border-zinc-800">
+              <tr key={`sk-${rowIndex}`} className="border-b border-[var(--border-soft)]">
                 {columns.map((column) => (
                   <td key={column.key} className={cellPad}>
                     <Skeleton className="h-3.5 w-full max-w-[120px]" />
@@ -133,12 +133,12 @@ export default function DataTable<T>({
     >
       <table className="w-full">
         <thead>
-          <tr className="bg-zinc-900">
+          <tr>
             {columns.map((column) => (
               <th
                 key={column.key}
                 scope="col"
-                className={`${cellPad} sticky top-0 z-10 bg-zinc-900 text-[10px] uppercase tracking-wide text-zinc-400 border-b border-zinc-800 ${
+                className={`${cellPad} sticky top-0 z-10 border-b border-[var(--border)] bg-[var(--panel)] text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[var(--text-3)] ${
                   column.align === 'right' ? 'text-right' : 'text-left'
                 }`}
                 style={column.width ? { width: column.width } : undefined}
@@ -153,14 +153,14 @@ export default function DataTable<T>({
             <tr
               key={rowKey(row)}
               onClick={onRowClick ? () => onRowClick(row) : undefined}
-              className={`border-b border-zinc-800 transition-colors duration-150 ${
-                onRowClick ? 'cursor-pointer hover:bg-zinc-800/50' : 'hover:bg-zinc-800/50'
+              className={`border-b border-[var(--border-soft)] leading-relaxed transition-colors duration-150 ${
+                onRowClick ? 'cursor-pointer hover:bg-[var(--bg-hover)]' : 'hover:bg-[var(--bg-hover)]'
               } ${rowClassName ? rowClassName(row) : ''}`}
             >
               {columns.map((column) => (
                 <td
                   key={column.key}
-                  className={`${cellPad} text-[13px] text-zinc-100 ${column.align === 'right' ? 'text-right' : ''}`}
+                  className={`${cellPad} text-[13.5px] text-[var(--text)] ${column.align === 'right' ? 'text-right' : ''}`}
                 >
                   {column.render(row)}
                 </td>
