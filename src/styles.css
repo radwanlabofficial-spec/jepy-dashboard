@@ -190,11 +190,19 @@ body.sb-collapsed .jepy-sidebar {
 .jepy-sidebar .brand-pill {
   display: inline-flex;
   align-items: center;
-  background: #f8fafc;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 5px 10px;
   line-height: 0;
+}
+/* Entire logo section gets off-white background */
+.jepy-sidebar .side-top {
+  background: #f8fafc;
+  margin: 8px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+body.night-ops .jepy-sidebar .side-top {
+  background: transparent;
+  border-color: transparent;
+  margin: 0;
 }
 body.night-ops .jepy-sidebar .brand-pill {
   background: transparent;
