@@ -190,7 +190,8 @@ body.sb-collapsed .jepy-sidebar {
 .jepy-sidebar .brand-pill {
   display: inline-flex;
   align-items: center;
-  background: #0d9488;
+  background: #f8fafc;
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 5px 10px;
   line-height: 0;
