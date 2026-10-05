@@ -61,7 +61,8 @@ export default function Topbar({ me, meta, mtdCostMicro, budgetMicro, cashGuardM
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Keyboard: N toggles Night Ops
+  // Keyboard: N toggles Night Ops. The command palette dispatches the same
+  // toggle events the buttons use, so one handler owns each piece of state.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const tag = (e.target as HTMLElement)?.tagName;
@@ -70,8 +71,16 @@ export default function Topbar({ me, meta, mtdCostMicro, budgetMicro, cashGuardM
         setNightOps((v) => !v);
       }
     };
+    const onNightToggle = () => setNightOps((v) => !v);
+    const onDensityToggle = () => setCompact((v) => !v);
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    window.addEventListener('jepy:night-toggle', onNightToggle);
+    window.addEventListener('jepy:density-toggle', onDensityToggle);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      window.removeEventListener('jepy:night-toggle', onNightToggle);
+      window.removeEventListener('jepy:density-toggle', onDensityToggle);
+    };
   }, []);
 
   const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
