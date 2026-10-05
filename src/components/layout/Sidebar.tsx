@@ -135,29 +135,26 @@ export default function Sidebar({ me, meta }: SidebarProps) {
   return (
     <aside className="jepy-sidebar" data-component="sidebar" aria-label="Primary">
       {/* Brand */}
-      <div className="side-top flex h-[68px] items-center gap-2.5 border-b border-white/[.07] px-5 transition-all duration-300">
-        <img
-          src="/jepy-logo.png"
-          alt="Jepy"
-          className="brand-logo"
-          onError={(e) => {
-            (e.target as HTMLImageElement).style.display = 'none';
-            const fb = (e.target as HTMLImageElement).nextElementSibling;
-            if (fb) fb.removeAttribute('hidden');
-          }}
-        />
-        <span hidden className="brand-fallback text-xl font-bold text-[#7ed321]" style={{ fontFamily: 'var(--disp)' }}>
-          Jepy
+      <div className="side-top flex h-[68px] items-center gap-2.5 border-b border-[var(--side-border)] px-5 transition-all duration-300">
+        <span className="brand-pill">
+          <img
+            src="/jepy-logo.png"
+            alt="Jepy"
+            className="brand-logo"
+            onError={(e) => {
+              (e.target as HTMLImageElement).style.display = 'none';
+              const fb = (e.target as HTMLImageElement).nextElementSibling;
+              if (fb) fb.removeAttribute('hidden');
+            }}
+          />
+          <span hidden className="brand-fallback text-xl font-bold text-[#7ed321]" style={{ fontFamily: 'var(--disp)' }}>
+            Jepy
+          </span>
         </span>
         <div className="logo-text flex items-center overflow-hidden transition-all duration-300">
           <span className="logo-sub text-[18px] font-bold uppercase tracking-[0.18em] text-[var(--side-text)]">leads</span>
         </div>
-        <img
-          src="/favicon.webp"
-          alt=""
-          className="brand-mark"
-          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-        />
+        <span className="brand-mark" aria-hidden="true">J</span>
       </div>
 
       {/* LIVE OPS */}
