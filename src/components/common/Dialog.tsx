@@ -72,17 +72,17 @@ export default function Dialog({ open, title, onClose, children, footer, width =
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className={`relative w-full ${widthClass} rounded-md border border-zinc-700 bg-zinc-900 shadow-xl`}
+        className={`relative w-full ${widthClass} rounded-[var(--radius)] border border-[var(--border)] bg-[var(--panel)] shadow-[var(--shadow-lg)]`}
       >
-        <header className="flex items-center justify-between gap-3 border-b border-zinc-800 px-4 py-2.5">
+        <header className="flex items-center justify-between gap-3 border-b border-[var(--border)] px-5 py-3.5">
           <div className="flex items-center gap-3">
-            <h2 className="text-sm font-medium text-zinc-100">{title}</h2>
+            <h2 className="text-[15px] font-semibold text-[var(--text)]">{title}</h2>
             {step ? (
               <span className="flex items-center gap-1" title={`step ${step.current} of ${step.total}`}>
                 {Array.from({ length: step.total }).map((_, index) => (
                   <i
                     key={index}
-                    className={`h-1.5 w-1.5 rounded-full ${index + 1 === step.current ? 'bg-green-400' : 'bg-zinc-700'}`}
+                    className={`h-1.5 w-1.5 rounded-full ${index + 1 === step.current ? 'bg-green-400' : 'bg-[var(--border)]'}`}
                   />
                 ))}
               </span>
@@ -92,13 +92,13 @@ export default function Dialog({ open, title, onClose, children, footer, width =
             type="button"
             aria-label="Close"
             onClick={onClose}
-            className="text-zinc-500 transition-colors duration-150 hover:text-zinc-100"
+            className="text-[var(--text-3)] transition-colors duration-150 hover:text-[var(--text)]"
           >
             <X size={14} aria-hidden="true" />
           </button>
         </header>
-        <div className="px-4 py-3">{children}</div>
-        {footer ? <footer className="flex items-center justify-end gap-2 border-t border-zinc-800 px-4 py-2.5">{footer}</footer> : null}
+        <div className="px-5 py-4">{children}</div>
+        {footer ? <footer className="flex items-center justify-end gap-2 border-t border-[var(--border)] px-5 py-3.5">{footer}</footer> : null}
       </div>
     </div>
   );
