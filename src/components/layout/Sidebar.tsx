@@ -135,7 +135,7 @@ export default function Sidebar({ me, meta }: SidebarProps) {
   return (
     <aside className="jepy-sidebar" data-component="sidebar" aria-label="Primary">
       {/* Brand */}
-      <div className="side-top flex h-[68px] items-center gap-3 border-b border-white/[.07] px-5 transition-all duration-300">
+      <div className="side-top flex h-[68px] items-center gap-2.5 border-b border-white/[.07] px-5 transition-all duration-300">
         <img
           src="/jepy-logo.png"
           alt="Jepy"
@@ -149,8 +149,8 @@ export default function Sidebar({ me, meta }: SidebarProps) {
         <span hidden className="brand-fallback text-xl font-bold text-[#7ed321]" style={{ fontFamily: 'var(--disp)' }}>
           Jepy
         </span>
-        <div className="logo-text overflow-hidden transition-all duration-300">
-          <span className="logo-sub text-[11px] font-medium uppercase tracking-[0.2em] text-[#94a3b8]">leads</span>
+        <div className="logo-text flex items-center overflow-hidden transition-all duration-300">
+          <span className="logo-sub text-[15px] font-semibold uppercase tracking-[0.18em] text-[#cbd5e1]">leads</span>
         </div>
         <img
           src="/favicon.webp"
