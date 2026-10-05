@@ -150,7 +150,7 @@ export default function Sidebar({ me, meta }: SidebarProps) {
           Jepy
         </span>
         <div className="logo-text flex items-center overflow-hidden transition-all duration-300">
-          <span className="logo-sub text-[15px] font-semibold uppercase tracking-[0.18em] text-[#cbd5e1]">leads</span>
+          <span className="logo-sub text-[18px] font-bold uppercase tracking-[0.18em] text-[#e2e8f0]">leads</span>
         </div>
         <img
           src="/favicon.webp"
