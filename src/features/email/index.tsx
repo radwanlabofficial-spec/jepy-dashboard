@@ -53,10 +53,10 @@ export default function EmailPage() {
   const error = useErrorMessage(campaigns.error ?? suppression.error ?? dsr.error ?? addSuppression.error);
 
   const campaignColumns: Column<Campaign>[] = [
-    { key: 'name', header: 'Campaign', width: '28%', render: (row) => <span className="text-zinc-100">{row.name}</span> },
+    { key: 'name', header: 'Campaign', width: '28%', render: (row) => <span className="text-[var(--text)]">{row.name}</span> },
     { key: 'esp', header: 'Channel', width: '16%', render: (row) => <StatusPill status={row.esp === 'resend' ? 'ok' : 'blocked'} label={row.esp === 'resend' ? 'transactional' : 'separate ESP'} /> },
     { key: 'status', header: 'Status', width: '12%', render: (row) => <StatusPill status={row.status === 'sending' ? 'running' : row.status === 'paused' ? 'warn' : row.status === 'done' ? 'done' : 'disabled'} label={row.status} /> },
-    { key: 'warmup', header: 'Warm-up', width: '18%', render: (row) => <span className="text-[10px] text-zinc-500">{row.warmup_stage ?? '—'}</span> },
+    { key: 'warmup', header: 'Warm-up', width: '18%', render: (row) => <span className="text-[10px] text-[var(--text-3)]">{row.warmup_stage ?? '—'}</span> },
     { key: 'sent', header: 'Sent', align: 'right', width: '8%', render: (row) => <Num value={row.sent} format={formatNumber} /> },
     {
       key: 'bounce',
@@ -84,7 +84,7 @@ export default function EmailPage() {
         title="Email"
         description="Transactional sending, suppression and data-subject requests."
         actions={
-          <span className="inline-flex items-center gap-1.5 rounded-md border border-zinc-700 bg-zinc-800 px-2 py-1 text-[13px] text-zinc-400">
+          <span className="inline-flex items-center gap-1.5 rounded-md border border-[var(--border)] bg-[var(--panel)] px-3 py-1 text-[13px] text-[var(--text-3)]">
             <Ban size={12} aria-hidden="true" /> cold outreach is not available
           </span>
         }
@@ -100,8 +100,8 @@ export default function EmailPage() {
           <Num value={(campaigns.data ?? []).reduce((peak, row) => Math.max(peak, row.bounce_rate), 0)} format={(value) => `${value.toFixed(2)}%`} className="text-base" />
         </Card>
         <Card padding="compact" title="ZeroBounce pool" subtitle="HOT-tier verification only">
-          <span className="font-mono text-base tabular-nums text-zinc-100">{formatNumber(ZB_MONTHLY_POOL)}</span>
-          <span className="ml-1 text-[10px] text-zinc-500">per month</span>
+          <span className="font-mono text-base tabular-nums text-[var(--text)]">{formatNumber(ZB_MONTHLY_POOL)}</span>
+          <span className="ml-1 text-[10px] text-[var(--text-3)]">per month</span>
         </Card>
       </div>
 
@@ -125,7 +125,7 @@ export default function EmailPage() {
                 value={address}
                 onChange={(event) => setAddress(event.target.value)}
                 placeholder="add address"
-                className="h-7 w-40 rounded-md border border-zinc-700 bg-zinc-800 px-2 text-[13px] text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-1 focus-visible:ring-green-400"
+                className="h-7 w-40 rounded-md border border-[var(--border)] bg-[var(--panel)] px-3 text-[13px] text-[var(--text)] placeholder:text-[var(--text-3)] focus-visible:ring-1 focus-visible:ring-green-400"
               />
               <Button
                 variant="secondary"
@@ -139,9 +139,9 @@ export default function EmailPage() {
         >
           <DataTable<SuppressionEntry>
             columns={[
-              { key: 'email', header: 'Address (masked)', width: '46%', render: (row) => <span className="font-mono text-[13px] text-zinc-100">{row.email_masked}</span> },
+              { key: 'email', header: 'Address (masked)', width: '46%', render: (row) => <span className="font-mono text-[13px] text-[var(--text)]">{row.email_masked}</span> },
               { key: 'reason', header: 'Reason', width: '24%', render: (row) => <StatusPill status="blocked" label={row.reason} /> },
-              { key: 'at', header: 'Added', align: 'right', width: '30%', render: (row) => <span className="text-[10px] text-zinc-500" title={formatUtc(row.created_at)}>{relativeTime(row.created_at)}</span> },
+              { key: 'at', header: 'Added', align: 'right', width: '30%', render: (row) => <span className="text-[10px] text-[var(--text-3)]" title={formatUtc(row.created_at)}>{relativeTime(row.created_at)}</span> },
             ]}
             rows={suppression.data ?? []}
             rowKey={(row) => String(row.id)}
@@ -154,9 +154,9 @@ export default function EmailPage() {
         <Card title="Data-subject requests" subtitle="due 30 days after receipt">
           <DataTable<DsrRequest>
             columns={[
-              { key: 'subject', header: 'Subject (masked)', width: '34%', render: (row) => <span className="font-mono text-[13px] text-zinc-100">{row.subject_masked}</span> },
-              { key: 'kind', header: 'Kind', width: '18%', render: (row) => <span className="text-zinc-400">{row.kind}</span> },
-              { key: 'due', header: 'Due', align: 'right', width: '24%', render: (row) => <span className="text-[10px] text-zinc-500" title={formatUtc(row.due_at)}>{relativeTime(row.due_at)}</span> },
+              { key: 'subject', header: 'Subject (masked)', width: '34%', render: (row) => <span className="font-mono text-[13px] text-[var(--text)]">{row.subject_masked}</span> },
+              { key: 'kind', header: 'Kind', width: '18%', render: (row) => <span className="text-[var(--text-3)]">{row.kind}</span> },
+              { key: 'due', header: 'Due', align: 'right', width: '24%', render: (row) => <span className="text-[10px] text-[var(--text-3)]" title={formatUtc(row.due_at)}>{relativeTime(row.due_at)}</span> },
               { key: 'status', header: 'Status', width: '24%', render: (row) => <StatusPill status={row.status === 'done' ? 'done' : 'warn'} label={row.status} /> },
             ]}
             rows={dsr.data ?? []}
@@ -168,7 +168,7 @@ export default function EmailPage() {
         </Card>
       </div>
 
-      <p className="text-[10px] text-zinc-500">
+      <p className="text-[10px] text-[var(--text-3)]">
         The send button stays disabled until a HOT lead&apos;s email is verified at L3. When the verification pool runs
         out, HOT sending stops rather than dropping back to a weaker check — a silently downgraded verification is worse
         than a visible pause.
