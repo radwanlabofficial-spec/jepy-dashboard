@@ -1,21 +1,12 @@
 /**
- * Overview.
+ * Overview — Jepy Bold v4 design.
  *
- * Read-only except for the alert links. There is no welcome message and no
- * greeting — an operator console opens on the numbers, not on a salutation.
- *
- * Every figure below maps to a field in the API contract. Nothing is computed
- * here that the API does not already define, and a null renders as a dash rather
- * than a zero.
+ * Read-only except for the alert links. Opens on the numbers, not a salutation.
+ * Every figure maps to a field in the API contract. A null renders as a dash.
  */
 
 import { Link } from 'react-router-dom';
-import { AlertTriangle, ArrowRight, Clock, Database, Users } from 'lucide-react';
-import PageHeader from '../../components/layout/PageHeader';
-import Card from '../../components/common/Card';
-import Num from '../../components/common/Num';
-import QuotaBar from '../../components/common/QuotaBar';
-import StatusPill from '../../components/common/StatusPill';
+import { AlertTriangle, ArrowRight, Clock, Database, Sparkles, Users, Zap } from 'lucide-react';
 import { api } from '../../lib/api';
 import { BD_DAILY_GUARD, BD_MONTHLY_PCT_LINE, POLLING } from '../../lib/constants';
 import { formatMicro, formatNumber, relativeTime } from '../../lib/format';
@@ -37,53 +28,78 @@ const errorMessages: Record<string, string> = {
   E_INTERNAL: 'unexpected internal failure',
 };
 
-const errorStatus: Record<string, string> = {
-  E_PROVIDER_ERROR: 'failed',
-  E_CREDENTIAL_INVALID: 'failed',
-  E_COMPLIANCE_BLOCK: 'blocked',
-  E_NO_CANDIDATE: 'warn',
-  E_TIMEOUT: 'warn',
-  E_AI_CAP: 'warn',
-  E_VALIDATION: 'warn',
-  E_FORBIDDEN: 'blocked',
-  E_QUOTA_EXHAUSTED: 'failed',
-  E_LICENSE_BLOCK: 'blocked',
-  E_TIER_GATE: 'blocked',
-  E_INTERNAL: 'failed',
-};
-
-function KpiCard({ label, children, hint }: { label: string; children: React.ReactNode; hint?: string }) {
+function KpiCard({ label, children, hint, accent = 'emerald', index = 0 }: {
+  label: string;
+  children: React.ReactNode;
+  hint?: string;
+  accent?: 'emerald' | 'amber' | 'violet' | 'rose';
+  index?: number;
+}) {
+  const accents = {
+    emerald: 'from-[#10b981] to-[#34d399]',
+    amber: 'from-[#f59e0b] to-[#fbbf24]',
+    violet: 'from-[#8b5cf6] to-[#a78bfa]',
+    rose: 'from-[#f43f5e] to-[#fb7185]',
+  };
   return (
-    <div data-component="kpi-card" className="rounded-md border border-zinc-800 bg-zinc-900 p-3">
-      <p className="text-[10px] uppercase tracking-wide text-zinc-400">{label}</p>
-      <div className="mt-1.5 flex items-baseline justify-between gap-2">{children}</div>
-      {hint ? <p className="mt-1 text-[10px] text-zinc-500">{hint}</p> : null}
+    <div
+      className="jepy-card jepy-enter relative overflow-hidden p-5"
+      style={{ animationDelay: `${index * 70}ms` }}
+      data-component="kpi-card"
+    >
+      <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${accents[accent]}`} />
+      <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-[var(--text-3)]">{label}</p>
+      <div className="jepy-kpi mt-2 text-[30px] leading-none text-[var(--text)]">{children}</div>
+      {hint ? <p className="mt-2 text-[11px] text-[var(--text-3)]">{hint}</p> : null}
     </div>
   );
 }
 
 function BurnChart({ points }: { points: CreditPoint[] }) {
   const max = points.reduce((peak, point) => Math.max(peak, point.credits), 0) || 1;
-  // Heights are computed in pixels: a percentage height needs a parent with a
-  // resolved height, and inside a flex column the bars silently collapse to zero.
   const MAX_BAR_PX = 88;
   return (
-    <div data-component="burn-chart" className="flex items-end gap-1">
+    <div data-component="burn-chart" className="flex items-end gap-1.5">
       {points.map((point) => {
         const height = Math.max(4, Math.round((point.credits / max) * MAX_BAR_PX));
         const guarded = point.credits >= BD_DAILY_GUARD;
         return (
-          <div key={`${point.day}-${point.account_label}-${point.unit_type}`} className="flex flex-1 flex-col items-center gap-1">
+          <div key={`${point.day}-${point.account_label}-${point.unit_type}`} className="flex flex-1 flex-col items-center gap-1.5">
             <div
               title={`${point.day} · ${formatNumber(point.credits)} credits`}
-              className={`w-full rounded-sm ${guarded ? 'bg-red-400' : 'bg-zinc-700'}`}
+              className={`w-full rounded-md transition-all duration-300 hover:scale-y-105 ${
+                guarded
+                  ? 'bg-gradient-to-t from-[#be123c] to-[#fb7185]'
+                  : 'bg-gradient-to-t from-[#047857] to-[#34d399]'
+              }`}
               style={{ height: `${height}px` }}
             />
-            <span className="font-mono text-[10px] text-zinc-600">{point.day.slice(8)}</span>
+            <span className="font-mono text-[10px] text-[var(--text-3)]">{point.day.slice(8)}</span>
           </div>
         );
       })}
     </div>
+  );
+}
+
+function SectionCard({ title, subtitle, action, children, index = 0 }: {
+  title: string;
+  subtitle?: string;
+  action?: React.ReactNode;
+  children: React.ReactNode;
+  index?: number;
+}) {
+  return (
+    <section className="jepy-card jepy-enter p-6" style={{ animationDelay: `${index * 80}ms` }}>
+      <div className="mb-4 flex items-start justify-between gap-3">
+        <div>
+          <h2 className="text-[15px] font-bold tracking-tight text-[var(--text)]" style={{ fontFamily: 'var(--disp)' }}>{title}</h2>
+          {subtitle ? <p className="mt-0.5 text-[12px] text-[var(--text-3)]">{subtitle}</p> : null}
+        </div>
+        {action}
+      </div>
+      {children}
+    </section>
   );
 }
 
@@ -107,172 +123,219 @@ export default function OverviewPage() {
   const brokenSources = (directories.data ?? []).filter((source) => source.health === 'broken');
   const gateTightened = s !== undefined && s !== null && s.gate_threshold > 55;
 
-  return (
-    <div data-component="overview-page" className="space-y-4">
-      <PageHeader
-        title="Overview"
-        description="Pipeline health at a glance. Queue and credit figures refresh on their own."
-        polling={meta.refreshing || stats.refreshing}
-      />
+  const hotCount = s?.by_tier.HOT ?? null;
+  const hasAlerts = invalidCredentials.length > 0 || (meta.data?.open_circuits ?? 0) > 0 ||
+    expiringQuota.length > 0 || brokenSources.length > 0 || gateTightened;
 
-      {(invalidCredentials.length > 0 || (meta.data?.open_circuits ?? 0) > 0 || expiringQuota.length > 0 || brokenSources.length > 0 || gateTightened) ? (
-        <div data-component="alert-row" className="flex flex-wrap items-center gap-2">
+  return (
+    <div data-component="overview-page" className="space-y-6">
+      {/* Hero — command deck */}
+      <div
+        className="jepy-enter relative overflow-hidden rounded-[var(--radius)] p-8 text-white shadow-[var(--shadow-lg)]"
+        style={{ background: 'linear-gradient(135deg, #0b1122 0%, #131c33 50%, #0b2b1f 100%)' }}
+      >
+        <div
+          className="pointer-events-none absolute inset-0 opacity-40"
+          style={{ background: 'radial-gradient(600px 200px at 80% 0%, rgba(16,185,129,.25), transparent), radial-gradient(400px 200px at 10% 100%, rgba(139,92,246,.2), transparent)' }}
+          aria-hidden="true"
+        />
+        <div className="relative flex flex-wrap items-center justify-between gap-6">
+          <div className="max-w-xl">
+            <p className="mb-2 flex items-center gap-2 text-[10.5px] font-bold uppercase tracking-[0.18em] text-emerald-300">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+              </span>
+              Command deck · all systems live
+            </p>
+            <h1 className="text-[28px] font-bold leading-tight tracking-tight" style={{ fontFamily: 'var(--disp)' }}>
+              Your pipeline scored{' '}
+              <span className="bg-gradient-to-r from-emerald-300 to-lime-300 bg-clip-text text-transparent">
+                {formatNumber(s?.scored_today ?? null)}
+              </span>{' '}
+              while you were away
+            </h1>
+            <p className="mt-2 text-[13.5px] leading-relaxed text-slate-300">
+              {formatNumber(hotCount)} hot leads queued · Apify pool live · extension capturing pages.
+              Hit <kbd className="rounded border border-white/20 bg-white/10 px-1.5 py-0.5 font-mono text-[11px]">⌘K</kbd> to command everything.
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Link
+              to="/leads"
+              className="flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 py-3 text-[13.5px] font-semibold text-white backdrop-blur transition-all hover:-translate-y-0.5 hover:bg-white/15"
+            >
+              <Sparkles size={16} aria-hidden="true" />
+              Take the tour
+            </Link>
+            <Link
+              to="/scoring"
+              className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#8b5cf6] to-[#d946ef] px-5 py-3 text-[13.5px] font-semibold text-white shadow-[0_8px_24px_rgba(139,92,246,.4)] transition-all hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(139,92,246,.5)]"
+            >
+              <Zap size={16} aria-hidden="true" />
+              Open scoring
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Alerts */}
+      {hasAlerts ? (
+        <div data-component="alert-row" className="jepy-enter flex flex-wrap items-center gap-2">
           {invalidCredentials.length > 0 ? (
-            <Link to="/vault" className="inline-flex items-center gap-1.5 rounded-md border border-red-500/30 bg-red-500/10 px-2 py-1 text-[13px] text-red-400">
-              <AlertTriangle size={12} aria-hidden="true" />
+            <Link to="/vault" className="inline-flex items-center gap-1.5 rounded-xl border border-red-200 bg-[var(--rose-soft)] px-3 py-1.5 text-[13px] font-medium text-[var(--rose-deep)] transition-all hover:-translate-y-px">
+              <AlertTriangle size={13} aria-hidden="true" />
               {invalidCredentials.length} credential{invalidCredentials.length > 1 ? 's' : ''} rejected
-              <ArrowRight size={12} aria-hidden="true" />
+              <ArrowRight size={13} aria-hidden="true" />
             </Link>
           ) : null}
           {(meta.data?.open_circuits ?? 0) > 0 ? (
-            <Link to="/jobs" className="inline-flex items-center gap-1.5 rounded-md border border-red-500/30 bg-red-500/10 px-2 py-1 text-[13px] text-red-400">
-              <AlertTriangle size={12} aria-hidden="true" />
+            <Link to="/jobs" className="inline-flex items-center gap-1.5 rounded-xl border border-red-200 bg-[var(--rose-soft)] px-3 py-1.5 text-[13px] font-medium text-[var(--rose-deep)] transition-all hover:-translate-y-px">
+              <AlertTriangle size={13} aria-hidden="true" />
               {meta.data?.open_circuits} circuit open
-              <ArrowRight size={12} aria-hidden="true" />
+              <ArrowRight size={13} aria-hidden="true" />
             </Link>
           ) : null}
           {expiringQuota.length > 0 ? (
-            <Link to="/providers" className="inline-flex items-center gap-1.5 rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-1 text-[13px] text-amber-400">
-              <Clock size={12} aria-hidden="true" />
+            <Link to="/providers" className="inline-flex items-center gap-1.5 rounded-xl border border-amber-200 bg-[var(--amber-soft)] px-3 py-1.5 text-[13px] font-medium text-[var(--amber-deep)] transition-all hover:-translate-y-px">
+              <Clock size={13} aria-hidden="true" />
               {expiringQuota.length} quota expiring within 7 days
-              <ArrowRight size={12} aria-hidden="true" />
+              <ArrowRight size={13} aria-hidden="true" />
             </Link>
           ) : null}
           {brokenSources.length > 0 ? (
-            <Link to="/sources" className="inline-flex items-center gap-1.5 rounded-md border border-red-500/30 bg-red-500/10 px-2 py-1 text-[13px] text-red-400">
-              <Database size={12} aria-hidden="true" />
+            <Link to="/sources" className="inline-flex items-center gap-1.5 rounded-xl border border-red-200 bg-[var(--rose-soft)] px-3 py-1.5 text-[13px] font-medium text-[var(--rose-deep)] transition-all hover:-translate-y-px">
+              <Database size={13} aria-hidden="true" />
               {brokenSources.length} source broken
-              <ArrowRight size={12} aria-hidden="true" />
+              <ArrowRight size={13} aria-hidden="true" />
             </Link>
           ) : null}
           {gateTightened ? (
-            <span
-              className="inline-flex items-center gap-1.5 rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-1 text-[13px] text-amber-400"
-              title="The AI gate tightens itself when the monthly budget crosses 70%. It happens silently, so it is surfaced."
-            >
+            <span className="inline-flex items-center gap-1.5 rounded-xl border border-amber-200 bg-[var(--amber-soft)] px-3 py-1.5 text-[13px] font-medium text-[var(--amber-deep)]">
               AI gate tightened to {s?.gate_threshold}
             </span>
           ) : null}
         </div>
       ) : null}
 
-      <div className="grid grid-cols-4 gap-3">
-        <KpiCard label="Total leads" hint={`${formatNumber(s?.new_today ?? null)} new today`}>
-          <Num value={s?.total ?? null} format={formatNumber} className="text-base" />
-          <Users size={13} className="text-zinc-600" aria-hidden="true" />
+      {/* KPI grid */}
+      <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
+        <KpiCard label="Total leads" hint={`${formatNumber(s?.new_today ?? null)} new today`} accent="emerald" index={0}>
+          {formatNumber(s?.total ?? null)}
         </KpiCard>
-        <KpiCard label="Tier split" hint={`${formatNumber(s?.by_tier.provisional ?? null)} provisional (no tier yet)`}>
-          <span className="font-mono text-[13px] tabular-nums">
-            <span className="text-rose-400">{formatNumber(s?.by_tier.HOT ?? null)}</span>
-            <span className="text-zinc-600"> / </span>
-            <span className="text-amber-400">{formatNumber(s?.by_tier.WARM ?? null)}</span>
-            <span className="text-zinc-600"> / </span>
-            <span className="text-zinc-400">{formatNumber(s?.by_tier.COLD ?? null)}</span>
+        <KpiCard label="Hot leads" hint="tier HOT · ready for outreach" accent="rose" index={1}>
+          <span className="flex items-center gap-2">
+            {formatNumber(hotCount)}
+            <Users size={16} className="text-[var(--text-3)]" aria-hidden="true" />
           </span>
         </KpiCard>
-        <KpiCard label="Verified email (L3)" hint="ZeroBounce pool: 2,000/month">
-          <Num value={s?.verified_email ?? null} format={formatNumber} className="text-base" />
+        <KpiCard label="Queue depth" hint={meta.data ? `oldest pending ${relativeTime(Date.now() / 1000 - meta.data.oldest_pending_sec)}` : undefined} accent="violet" index={2}>
+          {formatNumber(meta.data?.queue_depth ?? null)}
         </KpiCard>
-        <KpiCard label="Errors (24h)" hint="see Settings → Error log">
-          <Num value={s?.errors_24h ?? null} format={formatNumber} className="text-base" />
-        </KpiCard>
-        <KpiCard label="Queue depth" hint={meta.data ? `oldest pending ${relativeTime(Date.now() / 1000 - meta.data.oldest_pending_sec)}` : undefined}>
-          <Num value={meta.data?.queue_depth ?? null} format={formatNumber} className="text-base" />
-          <span className="text-[10px] text-zinc-500">{meta.data ? `${meta.data.running} running` : ''}</span>
-        </KpiCard>
-        <KpiCard label="BrightData credits today" hint={`daily guard ${formatNumber(BD_DAILY_GUARD)}`}>
-          <Num value={s?.bd_credits_today ?? null} format={formatNumber} className="text-base" />
-        </KpiCard>
-        <KpiCard label="Month-to-date spend" hint={`guard trips at ${formatMicro(60_000_000, 0)}`}>
-          <Num value={s?.mtd_cost_micro ?? null} format={(value) => formatMicro(value)} className="text-base" />
-        </KpiCard>
-        <KpiCard
-          label="Provisional"
-          hint="coverage below 60% — a score exists, a tier does not"
-        >
-          <Num value={s?.by_tier.provisional ?? null} format={formatNumber} className="text-base" />
+        <KpiCard label="MTD spend" hint={`guard trips at ${formatMicro(60_000_000, 0)}`} accent="amber" index={3}>
+          {formatMicro(s?.mtd_cost_micro ?? null)}
         </KpiCard>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <Card
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+        <SectionCard
           title="BrightData credit burn"
           subtitle={`daily guard ${formatNumber(BD_DAILY_GUARD)} · monthly line ${BD_MONTHLY_PCT_LINE}%`}
-          action={<StatusPill status={s && s.bd_credits_today >= BD_DAILY_GUARD ? 'warn' : 'ok'} label={s ? `${formatNumber(s.bd_credits_today)} today` : '—'} />}
+          index={0}
         >
-          {credits.data ? <BurnChart points={credits.data.series.slice(-14)} /> : <div className="h-24 animate-pulse rounded bg-zinc-800" />}
-          <p className="mt-2 text-[10px] text-zinc-500">
-            Grey bars are ordinary days. A bar turns red only when the daily guard is crossed, because the operator
-            is scanning for the exception, not admiring the trend.
-          </p>
-        </Card>
+          {credits.data ? <BurnChart points={credits.data.series.slice(-14)} /> : <div className="h-24 animate-pulse rounded-xl bg-[var(--border-soft)]" />}
+        </SectionCard>
 
-        <Card
+        <SectionCard
           title="Recent failures"
           subtitle="last 24 hours"
-          action={
-            <Link to="/settings" className="text-[13px] text-zinc-400 transition-colors duration-150 hover:text-zinc-100">
-              error log
-            </Link>
-          }
+          action={<Link to="/settings" className="text-[13px] font-medium text-[var(--text-2)] transition-colors hover:text-[var(--emerald-deep)]">error log →</Link>}
+          index={1}
         >
-          <ul className="divide-y divide-zinc-800">
+          <ul className="divide-y divide-[var(--border-soft)]">
             {(errors.data ?? []).slice(0, 6).map((entry) => (
-              <li key={entry.id} className="flex items-start justify-between gap-3 py-1.5">
+              <li key={entry.id} className="flex items-start justify-between gap-3 py-2.5">
                 <div className="min-w-0">
-                  <p className="truncate text-[13px] text-zinc-100">{errorMessages[entry.code] ?? entry.message}</p>
-                  <p className="font-mono text-[10px] text-zinc-500">
+                  <p className="truncate text-[13px] font-medium text-[var(--text)]">{errorMessages[entry.code] ?? entry.message}</p>
+                  <p className="font-mono text-[10.5px] text-[var(--text-3)]">
                     {entry.code}
                     {entry.reason ? ` · ${entry.reason}` : ''}
                     {entry.provider ? ` · ${entry.provider}` : ''}
                   </p>
                 </div>
-                <div className="flex shrink-0 items-center gap-2">
-                  <StatusPill status={errorStatus[entry.code] ?? 'warn'} label={entry.code.replace('E_', '').toLowerCase()} />
-                  <span className="text-[10px] text-zinc-500">{relativeTime(entry.at)}</span>
-                </div>
+                <span className="shrink-0 text-[11px] text-[var(--text-3)]">{relativeTime(entry.at)}</span>
               </li>
             ))}
+            {(errors.data ?? []).length === 0 ? (
+              <li className="py-6 text-center text-[13px] text-[var(--text-3)]">No failures in the last 24 hours.</li>
+            ) : null}
           </ul>
-        </Card>
+        </SectionCard>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <Card title="Recent imports" action={<Link to="/sources" className="text-[13px] text-zinc-400 hover:text-zinc-100">open Sources</Link>}>
-          <ul className="divide-y divide-zinc-800">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+        <SectionCard
+          title="Recent imports"
+          action={<Link to="/sources" className="text-[13px] font-medium text-[var(--text-2)] transition-colors hover:text-[var(--emerald-deep)]">open Sources →</Link>}
+          index={2}
+        >
+          <ul className="divide-y divide-[var(--border-soft)]">
             {(imports.data ?? []).slice(0, 5).map((run) => (
-              <li key={run.id} className="flex items-center justify-between gap-3 py-1.5">
+              <li key={run.id} className="flex items-center justify-between gap-3 py-2.5">
                 <div>
-                  <p className="text-[13px] text-zinc-100">
-                    {run.dataset} <span className="font-mono text-[10px] text-zinc-500">{run.release_version}</span>
+                  <p className="text-[13px] font-medium text-[var(--text)]">
+                    {run.dataset} <span className="font-mono text-[10.5px] font-normal text-[var(--text-3)]">{run.release_version}</span>
                   </p>
-                  <p className="text-[10px] text-zinc-500">
-                    scanned {formatNumber(run.rows_scanned)} · kept {formatNumber(run.rows_ingested)} · merged{' '}
-                    {formatNumber(run.rows_merged)}
+                  <p className="text-[11px] text-[var(--text-3)]">
+                    scanned {formatNumber(run.rows_scanned)} · kept {formatNumber(run.rows_ingested)} · merged {formatNumber(run.rows_merged)}
                   </p>
                 </div>
-                <div className="flex items-center gap-2">
-                  <StatusPill status={run.status === 'done' ? 'done' : run.status === 'running' ? 'running' : 'failed'} />
-                  <span className="text-[10px] text-zinc-500">{relativeTime(run.started_at)}</span>
-                </div>
+                <span className={`rounded-lg px-2 py-1 text-[11px] font-semibold ${
+                  run.status === 'done' ? 'bg-[var(--emerald-soft)] text-[var(--emerald-deep)]'
+                  : run.status === 'running' ? 'bg-[var(--amber-soft)] text-[var(--amber-deep)]'
+                  : 'bg-[var(--rose-soft)] text-[var(--rose-deep)]'
+                }`}>
+                  {run.status}
+                </span>
               </li>
             ))}
+            {(imports.data ?? []).length === 0 ? (
+              <li className="py-6 text-center text-[13px] text-[var(--text-3)]">No imports yet.</li>
+            ) : null}
           </ul>
-        </Card>
+        </SectionCard>
 
-        <Card title="Provider pool" subtitle="the pool is a floor, not a ceiling" action={<Link to="/vault" className="text-[13px] text-zinc-400 hover:text-zinc-100">add account</Link>}>
-          <ul className="space-y-2">
+        <SectionCard
+          title="Provider pool"
+          subtitle="the pool is a floor, not a ceiling"
+          action={<Link to="/vault" className="text-[13px] font-medium text-[var(--text-2)] transition-colors hover:text-[var(--emerald-deep)]">add account →</Link>}
+          index={3}
+        >
+          <ul className="space-y-3">
             {(accounts.data ?? []).slice(0, 5).map((account) => (
-              <li key={account.id} className="space-y-1">
+              <li key={account.id} className="space-y-1.5">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="font-mono text-[13px] text-zinc-100">{account.account_label}</span>
-                  <StatusPill status={account.status} />
+                  <span className="font-mono text-[13px] font-medium text-[var(--text)]">{account.account_label}</span>
+                  <span className={`rounded-lg px-2 py-0.5 text-[11px] font-semibold ${
+                    account.status === 'active' ? 'bg-[var(--emerald-soft)] text-[var(--emerald-deep)]'
+                    : 'bg-[var(--rose-soft)] text-[var(--rose-deep)]'
+                  }`}>
+                    {account.status}
+                  </span>
                 </div>
-                <QuotaBar used={account.quota_used} limit={account.quota_limit} compact />
+                <div className="h-1.5 overflow-hidden rounded-full bg-[var(--border-soft)]">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-[#10b981] to-[#34d399] transition-all duration-700"
+                    style={{ width: `${account.quota_limit ? Math.min(100, ((account.quota_used ?? 0) / account.quota_limit) * 100) : 0}%` }}
+                  />
+                </div>
               </li>
             ))}
+            {(accounts.data ?? []).length === 0 ? (
+              <li className="py-6 text-center text-[13px] text-[var(--text-3)]">No provider accounts yet.</li>
+            ) : null}
           </ul>
-        </Card>
+        </SectionCard>
       </div>
     </div>
   );

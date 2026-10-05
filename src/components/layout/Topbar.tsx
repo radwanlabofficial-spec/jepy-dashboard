@@ -1,15 +1,14 @@
 /**
- * Topbar.
+ * Topbar — Jepy Bold v4 design.
  *
- * Carries the environment badge, queue depth, the month-to-date cash position and
- * the operator's Access email. There is no avatar and no global search: one
- * person uses this console and every page owns its own filters.
- *
- * The "Demo data" chip is not decoration. When the console runs on bundled
- * fixtures the reviewer must never mistake those rows for live pipeline output.
+ * Sticky with blur, carries the environment badge, queue depth, cash position,
+ * density toggle, Night Ops toggle, command palette trigger, and the operator's
+ * Access email.
  */
 
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Bell, Columns3, Menu, Moon, Search, Sun, Zap } from 'lucide-react';
 import { BUILD_SHA, isDemoMode } from '../../lib/api';
 import { formatMicro } from '../../lib/format';
 import type { JobMeta, Me } from '../../lib/types';
@@ -23,59 +22,161 @@ export interface TopbarProps {
   cashGuardMicro: number;
 }
 
+function useNow() {
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const t = setInterval(() => setNow(new Date()), 30_000);
+    return () => clearInterval(t);
+  }, []);
+  return now;
+}
+
 export default function Topbar({ me, meta, mtdCostMicro, budgetMicro, cashGuardMicro }: TopbarProps) {
   const overGuard = mtdCostMicro !== null && mtdCostMicro >= cashGuardMicro;
+  const now = useNow();
+  const [nightOps, setNightOps] = useState(() => {
+    try { return localStorage.getItem('jepy-night') === 'on'; } catch { return false; }
+  });
+  const [compact, setCompact] = useState(() => {
+    try { return localStorage.getItem('jepy-density') === 'compact'; } catch { return false; }
+  });
+
+  useEffect(() => {
+    document.body.classList.toggle('night-ops', nightOps);
+    try { localStorage.setItem('jepy-night', nightOps ? 'on' : 'off'); } catch { /* ignore */ }
+  }, [nightOps]);
+
+  useEffect(() => {
+    document.body.classList.toggle('density-compact', compact);
+    try { localStorage.setItem('jepy-density', compact ? 'compact' : 'comfortable'); } catch { /* ignore */ }
+  }, [compact]);
+
+  // Scrolled shadow
+  useEffect(() => {
+    const onScroll = () => {
+      document.getElementById('topbar')?.classList.toggle('scrolled', window.scrollY > 8);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // Keyboard: N toggles Night Ops
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement)?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+      if ((e.key === 'n' || e.key === 'N') && !e.metaKey && !e.ctrlKey) {
+        setNightOps((v) => !v);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 
   return (
-    <header
-      data-component="topbar"
-      className="flex h-11 shrink-0 items-center justify-between gap-4 border-b border-zinc-800 bg-zinc-900 px-4"
-    >
-      <div className="flex items-center gap-3">
+    <header id="topbar" data-component="topbar" className="jepy-topbar">
+      <button
+        className="jepy-icon-btn"
+        title="Toggle sidebar ( [ )"
+        aria-label="Toggle sidebar"
+        onClick={() => document.body.classList.toggle('sb-collapsed')}
+      >
+        <Menu size={17} aria-hidden="true" />
+      </button>
+
+      <button
+        className="jepy-icon-btn"
+        title={compact ? 'Comfortable density' : 'Compact density'}
+        aria-label="Toggle density"
+        aria-pressed={compact}
+        onClick={() => setCompact((c) => !c)}
+      >
+        <Columns3 size={17} aria-hidden="true" />
+      </button>
+
+      <button
+        className="jepy-icon-btn"
+        title={nightOps ? 'Day mode (N)' : 'Night Ops (N)'}
+        aria-label="Toggle Night Ops"
+        aria-pressed={nightOps}
+        onClick={() => setNightOps((v) => !v)}
+      >
+        {nightOps ? <Sun size={17} aria-hidden="true" /> : <Moon size={17} aria-hidden="true" />}
+      </button>
+
+      <div className="date-pill flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--panel)] px-3.5 py-2 shadow-[var(--shadow)]">
+        <span className="live relative flex h-2 w-2" aria-hidden="true">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+        </span>
+        <span className="text-[12px] font-semibold text-[var(--text)]">{dateStr}</span>
+        <span className="font-mono text-[11px] tabular-nums text-[var(--text-3)]">{timeStr}</span>
+      </div>
+
+      <button
+        className="search ml-auto flex w-[300px] cursor-pointer items-center gap-2.5 rounded-xl border border-[var(--border)] bg-[var(--panel)] px-3.5 py-2.5 shadow-[var(--shadow)] transition-all hover:-translate-y-px hover:shadow-[var(--shadow-lg)]"
+        title="Command palette (⌘K)"
+        onClick={() => window.dispatchEvent(new CustomEvent('jepy:palette'))}
+      >
+        <Search size={15} className="shrink-0 text-[var(--text-3)]" aria-hidden="true" />
+        <span className="flex-1 text-left text-[12.5px] text-[var(--text-3)]">Search or type a command…</span>
+        <span className="kbd rounded-md border border-[var(--border)] bg-[var(--border-soft)] px-1.5 py-0.5 font-mono text-[10.5px] font-bold text-[var(--text-3)]">⌘K</span>
+      </button>
+
+      <div className="flex items-center gap-2.5">
         {isDemoMode ? (
           <span
             data-component="demo-chip"
             title="VITE_API_MODE is not 'live', so this console is reading bundled fixtures"
-            className="rounded border border-amber-500/30 bg-amber-500/15 px-1.5 py-0.5 text-[10px] font-medium text-amber-400"
+            className="rounded-md border border-amber-500/30 bg-amber-500/15 px-1.5 py-0.5 text-[10px] font-medium text-amber-600"
           >
             Demo data
           </span>
         ) : null}
-        <span className="rounded border border-zinc-700 bg-zinc-800 px-1.5 py-0.5 text-[10px] font-medium text-zinc-400">
+        <span className="rounded-md border border-[var(--border)] bg-[var(--panel)] px-1.5 py-0.5 text-[10px] font-medium text-[var(--text-2)]">
           {me?.env ?? 'local'}
-        </span>
-        <span
-          data-component="build-sha"
-          className="font-mono text-[10px] text-zinc-600"
-          title="Build stamp — the commit this bundle was built from"
-        >
-          {BUILD_SHA}
         </span>
         <Link
           to="/jobs"
-          className="text-[13px] text-zinc-400 transition-colors duration-150 hover:text-zinc-100"
+          className="text-[13px] text-[var(--text-2)] transition-colors hover:text-[var(--text)]"
           title="Queue depth"
         >
           queue{' '}
-          <span className="font-mono tabular-nums text-zinc-100">{meta ? meta.queue_depth.toLocaleString('en-US') : '—'}</span>
+          <span className="font-mono tabular-nums font-semibold text-[var(--text)]">
+            {meta ? meta.queue_depth.toLocaleString('en-US') : '—'}
+          </span>
         </Link>
         {meta && meta.open_circuits > 0 ? (
-          <span className="rounded border border-red-500/30 bg-red-500/15 px-1.5 py-0.5 text-[10px] font-medium text-red-400">
+          <span className="rounded-md border border-red-500/30 bg-red-500/15 px-1.5 py-0.5 text-[10px] font-medium text-red-500">
             {meta.open_circuits} circuit open
           </span>
         ) : null}
-      </div>
-      <div className="flex items-center gap-4">
         <span
-          className={`text-[13px] ${overGuard ? 'text-red-400' : 'text-zinc-400'}`}
+          className={`text-[13px] ${overGuard ? 'text-red-500' : 'text-[var(--text-2)]'}`}
           title={`cash guard ${formatMicro(cashGuardMicro, 0)} · month-to-date`}
         >
           MTD{' '}
-          <span className="font-mono tabular-nums text-zinc-100">{formatMicro(mtdCostMicro)}</span>
-          {budgetMicro !== null ? <span className="text-zinc-500"> / {formatMicro(budgetMicro, 0)}</span> : null}
+          <span className="font-mono tabular-nums font-semibold text-[var(--text)]">{formatMicro(mtdCostMicro)}</span>
+          {budgetMicro !== null ? <span className="text-[var(--text-3)]"> / {formatMicro(budgetMicro, 0)}</span> : null}
         </span>
-        <span className="text-[13px] text-zinc-500">{me?.email ?? '—'}</span>
       </div>
+
+      <button className="jepy-icon-btn relative" title="Notifications" aria-label="Notifications">
+        <Bell size={17} aria-hidden="true" />
+        <span className="n-dot absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-[var(--rose)] ring-2 ring-[var(--panel)]" />
+      </button>
+
+      <button className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#10b981] to-[#7ed321] px-4 py-2.5 text-[13px] font-semibold text-white shadow-[0_4px_16px_rgba(16,185,129,.35)] transition-all hover:-translate-y-px hover:shadow-[0_8px_24px_rgba(16,185,129,.45)]">
+        <Zap size={15} aria-hidden="true" />
+        New capture
+      </button>
+
+      <span className="hidden text-[11px] text-[var(--text-3)] xl:block" title={`Build ${BUILD_SHA}`}>
+        {me?.email ?? '—'}
+      </span>
     </header>
   );
 }

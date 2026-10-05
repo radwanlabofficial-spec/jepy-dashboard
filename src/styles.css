@@ -16,9 +16,64 @@
   font-display: swap;
   src: url('/assets/fonts/jetbrains-mono-latin-wght-normal.woff2') format('woff2');
 }
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 500 700;
+  font-display: swap;
+  src: local('Space Grotesk'), local('Inter');
+  /* Falls back to Inter until the woff2 is bundled — the display stack degrades gracefully. */
+}
 
-/* The only values Tailwind utility classes cannot express (13a §1.2, §3.3). */
+/* ============ Jepy Bold v4 design tokens ============ */
 :root {
+  --ease-out: cubic-bezier(.16,1,.3,1);
+  --ease-spring: cubic-bezier(.22,1.35,.36,1);
+  --dur-micro: 120ms;
+  --dur-short: 220ms;
+  --dur-long: 420ms;
+
+  /* Sidebar (dark navy command deck) */
+  --side: #0a0f1e;
+  --side-2: #070c18;
+  --side-border: rgba(255,255,255,.07);
+  --side-text: #e2e8f0;
+  --side-text-2: #94a3b8;
+  --side-text-3: #475569;
+
+  /* Content (light canvas) */
+  --bg: #f2f4f1;
+  --panel: #ffffff;
+  --border: #e2e9e2;
+  --border-soft: #ebf0eb;
+  --text: #0d1810;
+  --text-2: #4c5b51;
+  --text-3: #97a597;
+
+  /* Accents */
+  --emerald: #10b981;
+  --emerald-deep: #047857;
+  --emerald-soft: #e2faf0;
+  --amber: #f59e0b;
+  --amber-deep: #b45309;
+  --amber-soft: #fdf3df;
+  --violet: #8b5cf6;
+  --violet-deep: #6d28d9;
+  --violet-soft: #efe9fd;
+  --rose: #f43f5e;
+  --rose-deep: #be123c;
+  --rose-soft: #fdeef1;
+  --cyan: #06b6d4;
+
+  --radius: 20px;
+  --shadow: 0 1px 2px rgba(13,24,16,.05), 0 10px 30px rgba(13,24,16,.07);
+  --shadow-lg: 0 6px 16px rgba(13,24,16,.09), 0 24px 60px rgba(13,24,16,.12);
+
+  --font: 'Inter', -apple-system, sans-serif;
+  --disp: 'Space Grotesk', 'Inter', sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* Legacy jepy tokens (kept for compatibility) */
   --jepy-green: #4ade50;
   --jepy-green-soft: rgba(74, 222, 80, 0.12);
   --jepy-green-line: rgba(74, 222, 80, 0.38);
@@ -26,16 +81,36 @@
   --jepy-scroll: #3f3f46;
 }
 
+/* Night Ops (full dark canvas) */
+body.night-ops {
+  --bg: #0a0f1e;
+  --panel: #111827;
+  --border: #1e293b;
+  --border-soft: #1a2436;
+  --text: #f1f5f9;
+  --text-2: #94a3b8;
+  --text-3: #475569;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.4);
+  --shadow-lg: 0 6px 16px rgba(0,0,0,.4), 0 24px 60px rgba(0,0,0,.5);
+}
+
+/* Compact density */
+body.density-compact {
+  --radius: 14px;
+}
+
 @layer base {
   html {
-    background-color: #09090b;
+    background-color: var(--bg);
   }
   body {
-    @apply bg-zinc-950 text-zinc-100 font-sans antialiased;
+    @apply font-sans antialiased;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
     font-size: 13px;
     line-height: 1.45;
   }
-  /* Scrollbars are part of the instrument panel, not the OS. */
   * {
     scrollbar-color: var(--jepy-scroll) transparent;
     scrollbar-width: thin;
@@ -50,12 +125,11 @@
   *::-webkit-scrollbar-thumb {
     background-color: var(--jepy-scroll);
     border-radius: 6px;
-    border: 2px solid #09090b;
+    border: 2px solid var(--bg);
   }
-  /* Never remove the focus ring: in a dark UI the browser default is invisible. */
   :focus-visible {
     outline: none;
-    box-shadow: 0 0 0 1px var(--jepy-green);
+    box-shadow: 0 0 0 2px var(--emerald);
   }
   th {
     text-align: left;
@@ -65,9 +139,326 @@
   }
 }
 
-/* Active sidebar item: an inset 2px rail, never a border — a border would shift
-   the layout by 2px and the nav item would jump on selection (13a §3.3). */
+/* ============ Sidebar (dark navy, fixed, collapsible) ============ */
+.jepy-sidebar {
+  width: 270px;
+  flex-shrink: 0;
+  background: linear-gradient(180deg, #0b1122 0%, #070c18 100%);
+  color: var(--side-text);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 60;
+  transition: width var(--dur-long) var(--ease-out);
+  overflow: hidden;
+  border-right: 1px solid rgba(16,185,129,.1);
+}
+body.sb-collapsed .jepy-sidebar {
+  width: 84px;
+}
+
+.jepy-sidebar .brand-logo {
+  height: 32px;
+  max-width: 140px;
+  object-fit: contain;
+}
+body.sb-collapsed .jepy-sidebar .brand-logo {
+  display: none;
+}
+.jepy-sidebar .brand-mark {
+  display: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+}
+body.sb-collapsed .jepy-sidebar .brand-mark {
+  display: block;
+}
+
+/* Nav items */
+.jepy-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 14px;
+  margin: 1px 10px;
+  border-radius: 12px;
+  color: var(--side-text-2);
+  font-size: 13.5px;
+  font-weight: 500;
+  transition: all var(--dur-short) var(--ease-out);
+  white-space: nowrap;
+  overflow: hidden;
+}
+.jepy-nav-item:hover {
+  background: rgba(255,255,255,.06);
+  color: var(--side-text);
+  transform: translateX(2px);
+}
+.jepy-nav-item.nav-active {
+  background: linear-gradient(135deg, rgba(16,185,129,.18), rgba(16,185,129,.08));
+  color: #fff;
+  box-shadow: inset 2px 0 0 var(--emerald), 0 4px 14px rgba(16,185,129,.15);
+}
+.jepy-nav-item svg {
+  flex-shrink: 0;
+  width: 17px;
+  height: 17px;
+}
+body.sb-collapsed .jepy-nav-item {
+  justify-content: center;
+  padding: 10px 0;
+}
+body.sb-collapsed .jepy-nav-item .nav-text,
+body.sb-collapsed .nav-label {
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+
+/* LIVE OPS section */
+.jepy-ops {
+  margin: 14px;
+  padding: 13px;
+  border-radius: 14px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.07);
+  transition: all var(--dur-long) var(--ease-out);
+}
+body.sb-collapsed .jepy-ops {
+  max-height: 0;
+  opacity: 0;
+  margin: 0 14px;
+  padding: 0 13px;
+  border-width: 0;
+  overflow: hidden;
+}
+
+.ops-pulse {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+}
+.ops-pulse .core {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--emerald);
+  animation: ops-core-pulse 2s var(--ease-out) infinite;
+}
+.ops-pulse .ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid var(--emerald);
+  animation: ops-ring 2s var(--ease-out) infinite;
+}
+.ops-pulse .ring.r2 {
+  animation-delay: 1s;
+}
+@keyframes ops-core-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.25); opacity: .8; }
+}
+@keyframes ops-ring {
+  0% { transform: scale(1); opacity: .7; }
+  100% { transform: scale(2.6); opacity: 0; }
+}
+
+.ops-bar {
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(255,255,255,.08);
+  overflow: hidden;
+  position: relative;
+}
+.ops-bar .fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--emerald), var(--amber));
+  transition: width 1.2s var(--ease-out);
+  position: relative;
+}
+.ops-bar .fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.4), transparent);
+  animation: ops-shimmer 2.5s linear infinite;
+}
+@keyframes ops-shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.ops-glow {
+  color: var(--emerald);
+  font-weight: 700;
+  animation: ops-glow-pulse 2.4s ease-in-out infinite;
+}
+@keyframes ops-glow-pulse {
+  0%, 100% { text-shadow: 0 0 8px rgba(16,185,129,.4); }
+  50% { text-shadow: 0 0 16px rgba(16,185,129,.8); }
+}
+
+.ops-spark {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 22px;
+}
+.ops-spark span {
+  flex: 1;
+  border-radius: 1px;
+  background: linear-gradient(180deg, var(--emerald), rgba(16,185,129,.3));
+  animation: ops-spark-dance 1.8s ease-in-out infinite;
+}
+@keyframes ops-spark-dance {
+  0%, 100% { transform: scaleY(.4); }
+  50% { transform: scaleY(1); }
+}
+
+/* ============ Topbar (sticky, blurred) ============ */
+.jepy-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 28px;
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-soft);
+  transition: box-shadow var(--dur-short) var(--ease-out);
+}
+.jepy-topbar.scrolled {
+  box-shadow: 0 4px 20px rgba(13,24,16,.08);
+}
+
+.jepy-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all var(--dur-short) var(--ease-out);
+  box-shadow: var(--shadow);
+}
+.jepy-icon-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+  color: var(--text);
+  border-color: var(--emerald);
+}
+
+/* ============ Cards & content ============ */
+.jepy-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: all var(--dur-short) var(--ease-out);
+}
+.jepy-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.jepy-kpi {
+  font-family: var(--disp);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.jepy-tier-hot {
+  background: linear-gradient(135deg, #f43f5e, #fb7185);
+  color: #fff;
+  box-shadow: 0 0 16px rgba(244,63,94,.35);
+  animation: tier-glow 2.5s ease-in-out infinite;
+}
+@keyframes tier-glow {
+  0%, 100% { box-shadow: 0 0 12px rgba(244,63,94,.3); }
+  50% { box-shadow: 0 0 22px rgba(244,63,94,.55); }
+}
+.jepy-tier-warm {
+  background: var(--amber-soft);
+  color: var(--amber-deep);
+  border: 1px solid rgba(245,158,11,.3);
+}
+.jepy-tier-cold {
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+}
+
+/* Staggered entrance */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.jepy-enter {
+  animation: fade-up .55s var(--ease-out) both;
+}
+
+/* Legacy compat: active sidebar item (old class still used somewhere) */
 .nav-active {
   background: var(--jepy-green-soft);
   box-shadow: inset 2px 0 0 var(--jepy-green);
 }
+
+/* Main content offset for fixed sidebar */
+.jepy-main {
+  margin-left: 270px;
+  transition: margin-left var(--dur-long) var(--ease-out);
+  min-height: 100vh;
+}
+body.sb-collapsed .jepy-main {
+  margin-left: 84px;
+}
+
+/* Density compact adjustments */
+body.density-compact .jepy-card {
+  border-radius: 14px;
+}
+body.density-compact {
+  font-size: 12px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============ Light-mode compat layer ============
+   Legacy pages still use zinc-* utilities written for the dark theme.
+   Inside the light content canvas these are remapped so pages stay readable
+   until each is individually reskinned. Scoped to .jepy-main so the dark
+   sidebar is untouched. */
+.jepy-main .bg-zinc-950 { background-color: var(--bg); }
+.jepy-main .bg-zinc-900 { background-color: var(--panel); }
+.jepy-main .bg-zinc-800 { background-color: var(--border-soft); }
+.jepy-main .bg-zinc-800\/50 { background-color: var(--border-soft); }
+.jepy-main .text-zinc-100 { color: var(--text); }
+.jepy-main .text-zinc-200 { color: var(--text); }
+.jepy-main .text-zinc-300 { color: var(--text-2); }
+.jepy-main .text-zinc-400 { color: var(--text-2); }
+.jepy-main .text-zinc-500 { color: var(--text-3); }
+.jepy-main .text-zinc-600 { color: var(--text-3); }
+.jepy-main .border-zinc-800 { border-color: var(--border); }
+.jepy-main .border-zinc-700 { border-color: var(--border); }
+.jepy-main .divide-zinc-800 > :not([hidden]) ~ :not([hidden]) { border-color: var(--border-soft); }
+.jepy-main .placeholder-zinc-500::placeholder { color: var(--text-3); }

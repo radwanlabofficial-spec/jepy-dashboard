@@ -13,7 +13,7 @@ export default function AttributionFooter() {
   return (
     <footer
       data-component="attribution-footer"
-      className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-zinc-800 px-1 pt-3 text-[10px] text-zinc-500"
+      className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-[var(--border-soft)] px-1 pt-4 text-[10.5px] text-[var(--text-3)]"
     >
       <span>Place data:</span>
       {ATTRIBUTION.map((entry) => (
@@ -22,12 +22,12 @@ export default function AttributionFooter() {
           href={entry.href}
           target="_blank"
           rel="noreferrer noopener"
-          className="underline decoration-zinc-700 underline-offset-2 transition-colors duration-150 hover:text-zinc-300"
+          className="underline decoration-[var(--border)] underline-offset-2 transition-colors duration-150 hover:text-[var(--text-2)]"
         >
           {entry.label} ({entry.licence})
         </a>
       ))}
-      <span className="text-zinc-600">ODbL-derived fields are export-gated.</span>
+      <span>ODbL-derived fields are export-gated.</span>
     </footer>
   );
 }

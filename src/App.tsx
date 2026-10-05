@@ -63,9 +63,9 @@ function Shell() {
   if (sessionExpired) return <SessionExpired />;
 
   return (
-    <div className="flex min-h-screen bg-zinc-950">
-      <Sidebar />
-      <div className="flex min-w-0 flex-1 flex-col">
+    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
+      <Sidebar me={me.data} meta={meta.data} />
+      <div className="jepy-main flex min-w-0 flex-col">
         <Topbar
           me={me.data}
           meta={meta.data}
@@ -73,7 +73,7 @@ function Shell() {
           budgetMicro={stats.data?.mtd_budget_micro ?? null}
           cashGuardMicro={CASH_GUARD_MICRO}
         />
-        <main className="flex-1 overflow-auto p-4" data-component="page-content">
+        <main className="flex-1 p-7" data-component="page-content" style={{ maxWidth: 1400, width: '100%', margin: '0 auto' }}>
           {/* Keyed by path: navigating away remounts the boundary and clears the
               error, so a broken page is escapable by clicking the sidebar rather
               than only by reloading the whole app. The chrome stays mounted, so
