@@ -63,22 +63,22 @@ export default function VaultPage() {
   const error = useErrorMessage(credentials.error ?? pools.error ?? test.error ?? rotate.error ?? remove.error);
 
   const columns: Column<Credential>[] = [
-    { key: 'provider', header: 'Provider', width: '12%', render: (row) => <span className="font-mono text-[13px] text-zinc-100">{row.provider}</span> },
-    { key: 'account', header: 'Account', width: '16%', render: (row) => <span className="font-mono text-[10px] text-zinc-400">{row.account_label}</span> },
-    { key: 'key', header: 'Key name', width: '12%', render: (row) => <span className="font-mono text-[10px] text-zinc-400">{row.key_name}</span> },
+    { key: 'provider', header: 'Provider', width: '12%', render: (row) => <span className="font-mono text-[13px] text-[var(--text)]">{row.provider}</span> },
+    { key: 'account', header: 'Account', width: '16%', render: (row) => <span className="font-mono text-[10px] text-[var(--text-3)]">{row.account_label}</span> },
+    { key: 'key', header: 'Key name', width: '12%', render: (row) => <span className="font-mono text-[10px] text-[var(--text-3)]">{row.key_name}</span> },
     {
       key: 'last4',
       header: 'Masked',
       width: '12%',
       render: (row) => (
-        <span className="font-mono text-[13px] text-zinc-100" title="Only the last four characters ever leave the server">
+        <span className="font-mono text-[13px] text-[var(--text)]" title="Only the last four characters ever leave the server">
           {'••••'}{row.has_credential === 1 ? row.last4 : ''}
         </span>
       ),
     },
     { key: 'test', header: 'Test', width: '10%', render: (row) => <StatusPill status={row.test_status} /> },
-    { key: 'tested', header: 'Last tested', align: 'right', width: '12%', render: (row) => <span className="text-[10px] text-zinc-500" title={formatUtc(row.last_tested_at)}>{relativeTime(row.last_tested_at)}</span> },
-    { key: 'rotated', header: 'Rotated', align: 'right', width: '11%', render: (row) => <span className="text-[10px] text-zinc-500" title={formatUtc(row.rotated_at)}>{relativeTime(row.rotated_at)}</span> },
+    { key: 'tested', header: 'Last tested', align: 'right', width: '12%', render: (row) => <span className="text-[10px] text-[var(--text-3)]" title={formatUtc(row.last_tested_at)}>{relativeTime(row.last_tested_at)}</span> },
+    { key: 'rotated', header: 'Rotated', align: 'right', width: '11%', render: (row) => <span className="text-[10px] text-[var(--text-3)]" title={formatUtc(row.rotated_at)}>{relativeTime(row.rotated_at)}</span> },
     {
       key: 'actions',
       header: '',
@@ -125,17 +125,17 @@ export default function VaultPage() {
       >
         <div className="grid grid-cols-3 gap-3">
           {(pools.data ?? []).map((pool) => (
-            <div key={pool.provider} className="rounded-md border border-zinc-800 bg-zinc-950/40 p-3">
+            <div key={pool.provider} className="rounded-md border border-[var(--border)] bg-[var(--bg-hover)] p-3">
               <div className="flex items-start justify-between gap-2">
                 <div>
-                  <p className="font-mono text-[13px] text-zinc-100">{pool.provider}</p>
-                  <p className="mt-0.5 text-[10px] text-zinc-500">
+                  <p className="font-mono text-[13px] text-[var(--text)]">{pool.provider}</p>
+                  <p className="mt-0.5 text-[10px] text-[var(--text-3)]">
                     {pool.keyless === 1 ? 'no credential concept' : `${pool.account_count} accounts · ${pool.quota_total} ${pool.unit_type ?? ''}`}
                   </p>
                 </div>
                 {pool.single_account === 1 ? (
                   <Tooltip label="Yelp gets exactly one account, forever — a second one is refused with a policy error">
-                    <span className="inline-flex items-center gap-1 rounded border border-zinc-700 bg-zinc-800 px-1.5 py-0.5 text-[10px] text-zinc-400">
+                    <span className="inline-flex items-center gap-1 rounded border border-[var(--border)] bg-[var(--bg-hover)] px-1.5 py-0.5 text-[10px] text-[var(--text-3)]">
                       <Lock size={10} aria-hidden="true" /> locked
                     </span>
                   </Tooltip>
@@ -168,12 +168,12 @@ export default function VaultPage() {
       >
         <DataTable<AuditEntry>
           columns={[
-            { key: 'at', header: 'When', width: '14%', render: (row) => <span className="text-[10px] text-zinc-500" title={formatUtc(row.at)}>{relativeTime(row.at)}</span> },
-            { key: 'actor', header: 'Actor', width: '20%', render: (row) => <span className="text-[10px] text-zinc-400">{row.actor_email}</span> },
-            { key: 'entity', header: 'Entity', width: '20%', render: (row) => <span className="font-mono text-[10px] text-zinc-100">{row.entity_type} · {row.entity_id}</span> },
-            { key: 'action', header: 'Action', width: '14%', render: (row) => <span className="text-zinc-400">{row.action}</span> },
+            { key: 'at', header: 'When', width: '14%', render: (row) => <span className="text-[10px] text-[var(--text-3)]" title={formatUtc(row.at)}>{relativeTime(row.at)}</span> },
+            { key: 'actor', header: 'Actor', width: '20%', render: (row) => <span className="text-[10px] text-[var(--text-3)]">{row.actor_email}</span> },
+            { key: 'entity', header: 'Entity', width: '20%', render: (row) => <span className="font-mono text-[10px] text-[var(--text)]">{row.entity_type} · {row.entity_id}</span> },
+            { key: 'action', header: 'Action', width: '14%', render: (row) => <span className="text-[var(--text-3)]">{row.action}</span> },
             { key: 'result', header: 'Result', width: '10%', render: (row) => <StatusPill status={row.result === 'ok' ? 'ok' : row.result === 'denied' ? 'blocked' : 'failed'} label={row.result} /> },
-            { key: 'detail', header: 'Detail', width: '22%', render: (row) => <span className="text-zinc-500">{row.detail ?? '—'}</span> },
+            { key: 'detail', header: 'Detail', width: '22%', render: (row) => <span className="text-[var(--text-3)]">{row.detail ?? '—'}</span> },
           ]}
           rows={audit.data ?? []}
           rowKey={(row) => String(row.id)}
@@ -204,7 +204,7 @@ export default function VaultPage() {
             previous-version copy.
           </p>
           <RotateForm onSubmit={(secret) => rotating && void rotate.run({ id: rotating.id, secret })} />
-          <p className="text-[10px] text-zinc-500">
+          <p className="text-[10px] text-[var(--text-3)]">
             Rotating bumps the vault epoch, so every cached copy is invalidated within a few seconds without a deploy.
           </p>
         </div>
@@ -304,9 +304,9 @@ function NewAccountDialog({ open, provider, onClose }: { open: boolean; provider
       {step === 1 ? (
         <div className="space-y-3">
           <label className="block space-y-1">
-            <span className="text-[10px] uppercase tracking-wide text-zinc-500">Provider</span>
+            <span className="text-[10px] uppercase tracking-wide text-[var(--text-3)]">Provider</span>
             <select
-              className="h-7 w-full rounded-md border border-zinc-700 bg-zinc-800 px-2 text-[13px] text-zinc-100 focus-visible:ring-1 focus-visible:ring-green-400"
+              className="h-7 w-full rounded-md border border-[var(--border)] bg-[var(--panel)] px-3 text-[13px] text-[var(--text)] focus-visible:ring-1 focus-visible:ring-green-400"
               value={selectedProvider}
               onChange={(event) => setSelectedProvider(event.target.value)}
             >
@@ -321,29 +321,29 @@ function NewAccountDialog({ open, provider, onClose }: { open: boolean; provider
             </select>
           </label>
           <label className="block space-y-1">
-            <span className="text-[10px] uppercase tracking-wide text-zinc-500">Account label (server-assigned)</span>
+            <span className="text-[10px] uppercase tracking-wide text-[var(--text-3)]">Account label (server-assigned)</span>
             <input
               readOnly
               value={resolvedLabel}
-              className="h-7 w-full cursor-default rounded-md border border-zinc-800 bg-zinc-800/60 px-2 font-mono text-[13px] text-zinc-400"
+              className="h-7 w-full cursor-default rounded-md border border-[var(--border)] bg-[var(--bg-hover)]/60 px-2 font-mono text-[13px] text-[var(--text-3)]"
             />
           </label>
           <div className="grid grid-cols-2 gap-3">
             <label className="block space-y-1">
-              <span className="text-[10px] uppercase tracking-wide text-zinc-500">Quota limit</span>
+              <span className="text-[10px] uppercase tracking-wide text-[var(--text-3)]">Quota limit</span>
               <input
                 type="number"
                 value={quotaLimit}
                 onChange={(event) => setQuotaLimit(Number(event.target.value))}
-                className="h-7 w-full rounded-md border border-zinc-700 bg-zinc-800 px-2 font-mono text-[13px] text-zinc-100 focus-visible:ring-1 focus-visible:ring-green-400"
+                className="h-7 w-full rounded-md border border-[var(--border)] bg-[var(--panel)] px-3 font-mono text-[13px] text-[var(--text)] focus-visible:ring-1 focus-visible:ring-green-400"
               />
             </label>
             <label className="block space-y-1">
-              <span className="text-[10px] uppercase tracking-wide text-zinc-500">Quota period</span>
+              <span className="text-[10px] uppercase tracking-wide text-[var(--text-3)]">Quota period</span>
               <select
                 value={quotaPeriod}
                 onChange={(event) => setQuotaPeriod(event.target.value)}
-                className="h-7 w-full rounded-md border border-zinc-700 bg-zinc-800 px-2 text-[13px] text-zinc-100 focus-visible:ring-1 focus-visible:ring-green-400"
+                className="h-7 w-full rounded-md border border-[var(--border)] bg-[var(--panel)] px-3 text-[13px] text-[var(--text)] focus-visible:ring-1 focus-visible:ring-green-400"
               >
                 <option value="day">day</option>
                 <option value="month">month</option>
@@ -360,24 +360,24 @@ function NewAccountDialog({ open, provider, onClose }: { open: boolean; provider
       ) : (
         <div className="space-y-3">
           <label className="block space-y-1">
-            <span className="text-[10px] uppercase tracking-wide text-zinc-500">Key name</span>
+            <span className="text-[10px] uppercase tracking-wide text-[var(--text-3)]">Key name</span>
             <input
               value={keyName}
               onChange={(event) => setKeyName(event.target.value)}
-              className="h-7 w-full rounded-md border border-zinc-700 bg-zinc-800 px-2 font-mono text-[13px] text-zinc-100 focus-visible:ring-1 focus-visible:ring-green-400"
+              className="h-7 w-full rounded-md border border-[var(--border)] bg-[var(--panel)] px-3 font-mono text-[13px] text-[var(--text)] focus-visible:ring-1 focus-visible:ring-green-400"
             />
           </label>
           <label className="block space-y-1">
-            <span className="text-[10px] uppercase tracking-wide text-zinc-500">Secret</span>
+            <span className="text-[10px] uppercase tracking-wide text-[var(--text-3)]">Secret</span>
             <input
               type="password"
               autoComplete="off"
               value={secret}
               onChange={(event) => setSecret(event.target.value)}
-              className="h-7 w-full rounded-md border border-zinc-700 bg-zinc-800 px-2 font-mono text-[13px] text-zinc-100 focus-visible:ring-1 focus-visible:ring-green-400"
+              className="h-7 w-full rounded-md border border-[var(--border)] bg-[var(--panel)] px-3 font-mono text-[13px] text-[var(--text)] focus-visible:ring-1 focus-visible:ring-green-400"
             />
           </label>
-          <p className="text-[10px] text-zinc-500">
+          <p className="text-[10px] text-[var(--text-3)]">
             The server tests the key before encrypting it. If the test fails the credential is not stored and the
             account stays <span className="font-mono">untested</span> — that is the correct outcome, not a rollback: an
             account without a working key is skipped by the router&apos;s first filter and cannot take traffic.
@@ -399,7 +399,7 @@ function RotateForm({ onSubmit }: { onSubmit: (secret: string) => void }) {
         placeholder="New secret"
         value={value}
         onChange={(event) => setValue(event.target.value)}
-        className="h-7 w-full rounded-md border border-zinc-700 bg-zinc-800 px-2 font-mono text-[13px] text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-1 focus-visible:ring-green-400"
+        className="h-7 w-full rounded-md border border-[var(--border)] bg-[var(--panel)] px-3 font-mono text-[13px] text-[var(--text)] placeholder:text-[var(--text-3)] focus-visible:ring-1 focus-visible:ring-green-400"
       />
       <Button variant="danger" disabled={value.length === 0} onClick={() => onSubmit(value)}>
         Overwrite the stored key
