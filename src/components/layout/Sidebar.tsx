@@ -46,7 +46,7 @@ export default function Sidebar() {
     <nav
       data-component="sidebar"
       aria-label="Primary"
-      className="w-60 shrink-0 border-r border-zinc-800 bg-zinc-900"
+      className="sticky top-0 h-screen w-60 shrink-0 self-start overflow-y-auto border-r border-zinc-800 bg-zinc-900"
     >
       <div className="flex h-11 items-center gap-2 border-b border-zinc-800 px-4">
         <span className="h-2.5 w-2.5 rounded-sm bg-green-400" aria-hidden="true" />
