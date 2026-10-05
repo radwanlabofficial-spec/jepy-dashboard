@@ -25,22 +25,24 @@ export default function Card({
   padding = 'standard',
   className = '',
 }: CardProps) {
-  const pad = padding === 'none' ? '' : padding === 'compact' ? 'p-4' : 'p-6';
+  const pad = padding === 'none' ? 'p-0' : padding === 'compact' ? 'p-4' : 'p-6';
   return (
     <section
       data-component="card"
       className={`jepy-card jepy-enter ${className}`}
     >
-      {title ? (
-        <header className="mb-4 flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <h2 className="truncate text-[15px] font-bold tracking-tight text-[var(--text)]" style={{ fontFamily: 'var(--disp)' }}>{title}</h2>
-            {subtitle ? <p className="mt-0.5 truncate text-[12px] text-[var(--text-3)]">{subtitle}</p> : null}
-          </div>
-          {action ? <div className="shrink-0">{action}</div> : null}
-        </header>
-      ) : null}
-      <div className={pad || undefined}>{children}</div>
+      <div className={pad}>
+        {title ? (
+          <header className="mb-4 flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <h2 className="text-[15px] font-bold tracking-tight text-[var(--text)]" style={{ fontFamily: 'var(--disp)' }}>{title}</h2>
+              {subtitle ? <p className="mt-0.5 text-[12px] leading-relaxed text-[var(--text-3)]">{subtitle}</p> : null}
+            </div>
+            {action ? <div className="shrink-0">{action}</div> : null}
+          </header>
+        ) : null}
+        {children}
+      </div>
     </section>
   );
 }
