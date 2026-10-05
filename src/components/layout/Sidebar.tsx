@@ -154,7 +154,7 @@ export default function Sidebar({ me, meta }: SidebarProps) {
         <div className="logo-text flex items-center overflow-hidden transition-all duration-300">
           <span className="logo-sub text-[18px] font-bold uppercase tracking-[0.18em] text-[var(--side-text)]">leads</span>
         </div>
-        <span className="brand-mark" aria-hidden="true">J</span>
+        <img src="/favicon.webp" alt="" className="brand-mark" aria-hidden="true" style={{width: "32px", height: "32px", objectFit: "contain"}} />
       </div>
 
       {/* LIVE OPS */}
