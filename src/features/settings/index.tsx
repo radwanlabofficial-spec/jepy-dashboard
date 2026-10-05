@@ -72,7 +72,7 @@ export default function SettingsPage() {
   const ruleError = useErrorMessage(patch.error);
 
   const deviceColumns: Column<Device>[] = [
-    { key: 'label', header: 'Device', width: '24%', render: (row) => <span className="font-mono text-[13px] text-zinc-100">{row.device_label}</span> },
+    { key: 'label', header: 'Device', width: '24%', render: (row) => <span className="font-mono text-[13px] text-[var(--text)]">{row.device_label}</span> },
     { key: 'mode', header: 'Mode', width: '10%', render: (row) => <StatusPill status="blocked" label={row.mode} /> },
     {
       key: 'heartbeat',
@@ -81,7 +81,7 @@ export default function SettingsPage() {
       render: (row) => {
         const staleBy = row.last_heartbeat_at === null ? Infinity : Date.now() / 1000 - row.last_heartbeat_at;
         return (
-          <span className={staleBy > STALE_DEVICE_SEC ? 'text-[10px] text-amber-400' : 'text-[10px] text-zinc-500'} title={formatUtc(row.last_heartbeat_at)}>
+          <span className={staleBy > STALE_DEVICE_SEC ? 'text-[10px] text-amber-400' : 'text-[10px] text-[var(--text-3)]'} title={formatUtc(row.last_heartbeat_at)}>
             {relativeTime(row.last_heartbeat_at)}
           </span>
         );
@@ -97,7 +97,7 @@ export default function SettingsPage() {
         <select
           value={row.current_directive}
           onChange={(event) => void directive.run({ id: row.id, value: event.target.value as Device['current_directive'] })}
-          className="h-7 rounded-md border border-zinc-700 bg-zinc-800 px-2 font-mono text-[10px] text-zinc-100 focus-visible:ring-1 focus-visible:ring-green-400"
+          className="h-7 rounded-md border border-[var(--border)] bg-[var(--panel)] px-3 font-mono text-[10px] text-[var(--text)] focus-visible:ring-1 focus-visible:ring-green-400"
         >
           {DIRECTIVES.map((value) => (
             <option key={value} value={value}>
@@ -145,7 +145,7 @@ export default function SettingsPage() {
         <Card title="Dispatcher" subtitle="pausing stops new claims; running work finishes">
           <div className="space-y-2">
             <StatusPill status={settings.data?.dispatcher_paused === true ? 'warn' : 'ok'} label={settings.data?.dispatcher_paused === true ? 'paused' : 'running'} />
-            <p className="text-[10px] text-zinc-500">
+            <p className="text-[10px] text-[var(--text-3)]">
               The dispatcher is paused automatically when the daily credit guard trips. Resuming needs an explicit
               confirmation that lists what restarts.
             </p>
@@ -166,7 +166,7 @@ export default function SettingsPage() {
         <Card title="AI daily cap" subtitle="Pass 1 requests per day">
           <div className="space-y-2">
             <Num value={typeof settings.data?.ai_daily_cap === 'number' ? settings.data.ai_daily_cap : null} className="text-base" />
-            <p className="text-[10px] text-zinc-500">
+            <p className="text-[10px] text-[var(--text-3)]">
               The cap is a ceiling on money, not a target. Reaching it pauses AI scoring and says so on Overview rather
               than queueing silently.
             </p>
@@ -180,14 +180,14 @@ export default function SettingsPage() {
       >
         <div className="space-y-1">
           {Object.entries(routerWeights.data ?? {}).map(([key, value]) => (
-            <div key={key} className="flex items-center justify-between gap-3 border-b border-zinc-800 py-1 last:border-0">
-              <span className="font-mono text-[13px] text-zinc-100">{key}</span>
-              <Num value={value} format={(input) => input.toFixed(2)} className="text-zinc-400" />
+            <div key={key} className="flex items-center justify-between gap-3 border-b border-[var(--border)] py-1 last:border-0">
+              <span className="font-mono text-[13px] text-[var(--text)]">{key}</span>
+              <Num value={value} format={(input) => input.toFixed(2)} className="text-[var(--text-3)]" />
             </div>
           ))}
         </div>
         {ruleError ? <div className="mt-2"><ErrorState error={ruleError} compact /></div> : null}
-        <p className="mt-2 text-[10px] text-zinc-500">
+        <p className="mt-2 text-[10px] text-[var(--text-3)]">
           Shown, not editable. A routing weight change alters which provider spends money, so it goes through a written
           decision first — the same reason quota has no input field.
         </p>
@@ -218,11 +218,11 @@ export default function SettingsPage() {
           <ul className="divide-y divide-zinc-800">
             {(geo.data ?? []).map((target) => (
               <li key={target.id} className="flex items-center justify-between gap-3 py-1.5">
-                <span className="text-[13px] text-zinc-100">
-                  {target.label} <span className="font-mono text-[10px] text-zinc-500">{target.country_code}</span>
+                <span className="text-[13px] text-[var(--text)]">
+                  {target.label} <span className="font-mono text-[10px] text-[var(--text-3)]">{target.country_code}</span>
                 </span>
                 <span className="flex items-center gap-2">
-                  <Num value={target.niche_count} unit="niches" className="text-zinc-400" />
+                  <Num value={target.niche_count} unit="niches" className="text-[var(--text-3)]" />
                   <StatusPill status={target.enabled === 1 ? 'active' : 'disabled'} label={target.enabled === 1 ? 'on' : 'off'} />
                 </span>
               </li>
@@ -233,7 +233,7 @@ export default function SettingsPage() {
         <Card title="Niches" subtitle="used to build directory queries and to group leads">
           <div className="flex flex-wrap gap-1.5">
             {(niches.data ?? []).map((niche) => (
-              <span key={niche} className="rounded border border-zinc-700 bg-zinc-800 px-1.5 py-0.5 font-mono text-[10px] text-zinc-400">
+              <span key={niche} className="rounded border border-[var(--border)] bg-[var(--bg-hover)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--text-3)]">
                 {niche}
               </span>
             ))}
@@ -244,12 +244,12 @@ export default function SettingsPage() {
       <Card padding="none" title="Error log" subtitle="branch on the code, never on the message text">
         <DataTable<ErrorLogEntry>
           columns={[
-            { key: 'at', header: 'When', width: '12%', render: (row) => <span className="text-[10px] text-zinc-500" title={formatUtc(row.at)}>{relativeTime(row.at)}</span> },
-            { key: 'code', header: 'Code', width: '20%', render: (row) => <span className="font-mono text-[10px] text-zinc-100">{row.code}</span> },
-            { key: 'reason', header: 'Reason', width: '14%', render: (row) => <span className="font-mono text-[10px] text-zinc-400">{row.reason ?? '—'}</span> },
-            { key: 'provider', header: 'Provider', width: '12%', render: (row) => <span className="font-mono text-[10px] text-zinc-400">{row.provider ?? '—'}</span> },
-            { key: 'job', header: 'Job', width: '14%', render: (row) => <span className="font-mono text-[10px] text-zinc-400">{row.job_id ?? '—'}</span> },
-            { key: 'message', header: 'Message', width: '28%', render: (row) => <span className="text-zinc-500">{row.message}</span> },
+            { key: 'at', header: 'When', width: '12%', render: (row) => <span className="text-[10px] text-[var(--text-3)]" title={formatUtc(row.at)}>{relativeTime(row.at)}</span> },
+            { key: 'code', header: 'Code', width: '20%', render: (row) => <span className="font-mono text-[10px] text-[var(--text)]">{row.code}</span> },
+            { key: 'reason', header: 'Reason', width: '14%', render: (row) => <span className="font-mono text-[10px] text-[var(--text-3)]">{row.reason ?? '—'}</span> },
+            { key: 'provider', header: 'Provider', width: '12%', render: (row) => <span className="font-mono text-[10px] text-[var(--text-3)]">{row.provider ?? '—'}</span> },
+            { key: 'job', header: 'Job', width: '14%', render: (row) => <span className="font-mono text-[10px] text-[var(--text-3)]">{row.job_id ?? '—'}</span> },
+            { key: 'message', header: 'Message', width: '28%', render: (row) => <span className="text-[var(--text-3)]">{row.message}</span> },
           ]}
           rows={errors.data ?? []}
           rowKey={(row) => String(row.id)}
@@ -282,7 +282,7 @@ export default function SettingsPage() {
           </>
         }
       >
-        <p className="text-[13px] text-zinc-100">
+        <p className="text-[13px] text-[var(--text)]">
           {settings.data?.dispatcher_paused === true
             ? 'Resuming restarts new job claims and paid provider calls. Running work was never stopped.'
             : 'Pausing stops new claims. Work already running finishes, and nothing new will be dispatched until you resume.'}
@@ -330,15 +330,15 @@ export default function SettingsPage() {
         ) : (
           <div className="space-y-2">
             <label className="block space-y-1">
-              <span className="text-[10px] uppercase tracking-wide text-zinc-500">Device label</span>
+              <span className="text-[10px] uppercase tracking-wide text-[var(--text-3)]">Device label</span>
               <input
                 value={deviceLabel}
                 onChange={(event) => setDeviceLabel(event.target.value)}
                 placeholder="chrome-operator-laptop"
-                className="h-7 w-full rounded-md border border-zinc-700 bg-zinc-800 px-2 font-mono text-[13px] text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-1 focus-visible:ring-green-400"
+                className="h-7 w-full rounded-md border border-[var(--border)] bg-[var(--panel)] px-3 font-mono text-[13px] text-[var(--text)] placeholder:text-[var(--text-3)] focus-visible:ring-1 focus-visible:ring-green-400"
               />
             </label>
-            <p className="text-[10px] text-zinc-500">
+            <p className="text-[10px] text-[var(--text-3)]">
               The token is stored as a hash on the server. It is displayed once, at creation, because the extension needs
               it — after that there is no way to read it back.
             </p>
