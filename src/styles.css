@@ -44,6 +44,7 @@
   /* Content (light canvas) */
   --bg: #f2f4f1;
   --panel: #ffffff;
+  --bg-hover: #f6f8f6;
   --border: #e2e9e2;
   --border-soft: #ebf0eb;
   --text: #0d1810;
@@ -85,6 +86,7 @@
 body.night-ops {
   --bg: #0a0f1e;
   --panel: #111827;
+  --bg-hover: #1a2436;
   --border: #1e293b;
   --border-soft: #1a2436;
   --text: #f1f5f9;
