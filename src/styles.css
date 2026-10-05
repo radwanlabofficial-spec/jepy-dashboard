@@ -145,8 +145,8 @@ body.density-compact {
 .jepy-sidebar {
   width: 270px;
   flex-shrink: 0;
-  background: linear-gradient(180deg, #0b1122 0%, #070c18 100%);
-  color: var(--side-text);
+  background: #ffffff;
+  color: var(--text);
   display: flex;
   flex-direction: column;
   position: fixed;
@@ -156,7 +156,19 @@ body.density-compact {
   z-index: 60;
   transition: width var(--dur-long) var(--ease-out);
   overflow: hidden;
+  border-right: 1px solid var(--border);
+}
+/* Dark sidebar only in night-ops mode */
+body.night-ops .jepy-sidebar {
+  background: linear-gradient(180deg, #0b1122 0%, #070c18 100%);
+  color: var(--side-text);
   border-right: 1px solid rgba(16,185,129,.1);
+}
+/* Live Ops stays dark even in light mode */
+.jepy-ops {
+  background: linear-gradient(180deg, #0b1122 0%, #070c18 100%) !important;
+  color: #e2e8f0 !important;
+  border-radius: 12px;
 }
 body.sb-collapsed .jepy-sidebar {
   width: 84px;
