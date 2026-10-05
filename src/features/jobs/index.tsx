@@ -59,21 +59,21 @@ export default function JobsPage() {
   const hopsError = useErrorMessage(hops.error);
 
   const columns: Column<Job>[] = [
-    { key: 'id', header: 'Job', width: '12%', render: (job) => <span className="font-mono text-[13px] text-zinc-100">{job.id}</span> },
-    { key: 'type', header: 'Type', width: '14%', render: (job) => <span className="text-zinc-400">{job.job_type}</span> },
-    { key: 'target', header: 'Payload', width: '26%', render: (job) => <span className="block truncate font-mono text-[10px] text-zinc-400" title={job.payload_summary}>{job.payload_summary}</span> },
+    { key: 'id', header: 'Job', width: '12%', render: (job) => <span className="font-mono text-[13px] text-[var(--text)]">{job.id}</span> },
+    { key: 'type', header: 'Type', width: '14%', render: (job) => <span className="text-[var(--text-3)]">{job.job_type}</span> },
+    { key: 'target', header: 'Payload', width: '26%', render: (job) => <span className="block truncate font-mono text-[10px] text-[var(--text-3)]" title={job.payload_summary}>{job.payload_summary}</span> },
     { key: 'status', header: 'Status', width: '10%', render: (job) => <StatusPill status={JOB_STATUS[job.status]} label={job.status} /> },
-    { key: 'provider', header: 'Provider', width: '12%', render: (job) => <span className="font-mono text-[10px] text-zinc-400">{job.provider ?? '—'}</span> },
+    { key: 'provider', header: 'Provider', width: '12%', render: (job) => <span className="font-mono text-[10px] text-[var(--text-3)]">{job.provider ?? '—'}</span> },
     { key: 'attempts', header: 'Attempts', align: 'right', width: '9%', render: (job) => <Num value={job.attempts} unit={`/ ${job.max_attempts}`} /> },
     { key: 'hop', header: 'Hop', align: 'right', width: '6%', render: (job) => <Num value={job.hop_count} unit="/ 3" /> },
-    { key: 'age', header: 'Age', align: 'right', width: '8%', render: (job) => <span className="text-[10px] text-zinc-500" title={formatUtc(job.created_at)}>{relativeTime(job.created_at)}</span> },
+    { key: 'age', header: 'Age', align: 'right', width: '8%', render: (job) => <span className="text-[10px] text-[var(--text-3)]" title={formatUtc(job.created_at)}>{relativeTime(job.created_at)}</span> },
   ];
 
   const hopColumns: Column<HopAttempt>[] = [
     { key: 'hop', header: 'Hop', align: 'right', width: '5%', render: (hop) => <Num value={hop.hop} /> },
-    { key: 'provider', header: 'Provider', width: '12%', render: (hop) => <span className="font-mono text-[10px] text-zinc-100">{hop.provider}</span> },
-    { key: 'account', header: 'Account', width: '12%', render: (hop) => <span className="font-mono text-[10px] text-zinc-400">{hop.account_label}</span> },
-    { key: 'adapter', header: 'Adapter', width: '10%', render: (hop) => <span className="font-mono text-[10px] text-zinc-400">{hop.adapter}</span> },
+    { key: 'provider', header: 'Provider', width: '12%', render: (hop) => <span className="font-mono text-[10px] text-[var(--text)]">{hop.provider}</span> },
+    { key: 'account', header: 'Account', width: '12%', render: (hop) => <span className="font-mono text-[10px] text-[var(--text-3)]">{hop.account_label}</span> },
+    { key: 'adapter', header: 'Adapter', width: '10%', render: (hop) => <span className="font-mono text-[10px] text-[var(--text-3)]">{hop.adapter}</span> },
     {
       key: 'pack',
       header: 'Pack',
@@ -89,15 +89,15 @@ export default function JobsPage() {
     { key: 'records', header: 'Records', align: 'right', width: '8%', render: (hop) => <Num value={hop.records_count} /> },
     { key: 'units', header: 'Units', align: 'right', width: '8%', render: (hop) => <Num value={hop.units} unit={hop.unit_type ?? undefined} /> },
     { key: 'cost', header: 'Cost', align: 'right', width: '8%', render: (hop) => <Num value={hop.cost_micro} format={(value) => formatMicro(value)} /> },
-    { key: 'latency', header: 'Latency', align: 'right', width: '8%', render: (hop) => <Num value={hop.latency_ms} format={formatLatency} className="text-zinc-400" /> },
-    { key: 'score', header: 'Decision', align: 'right', width: '7%', render: (hop) => <Num value={hop.score_milli} format={formatMilli} className="text-zinc-400" /> },
+    { key: 'latency', header: 'Latency', align: 'right', width: '8%', render: (hop) => <Num value={hop.latency_ms} format={formatLatency} className="text-[var(--text-3)]" /> },
+    { key: 'score', header: 'Decision', align: 'right', width: '7%', render: (hop) => <Num value={hop.score_milli} format={formatMilli} className="text-[var(--text-3)]" /> },
   ];
 
   const rejectedColumns: Column<RejectedCandidate>[] = [
-    { key: 'provider', header: 'Rejected candidate', width: '26%', render: (row) => <span className="font-mono text-[10px] text-zinc-400">{row.provider} · {row.account_label}</span> },
+    { key: 'provider', header: 'Rejected candidate', width: '26%', render: (row) => <span className="font-mono text-[10px] text-[var(--text-3)]">{row.provider} · {row.account_label}</span> },
     { key: 'filter', header: 'Filter', width: '18%', render: (row) => <StatusPill status="disabled" label={row.filter} /> },
     { key: 'score', header: 'Score', align: 'right', width: '10%', render: (row) => <Num value={row.score_milli} format={formatMilli} /> },
-    { key: 'reason', header: 'Why it was dropped', width: '46%', render: (row) => <span className="text-zinc-500">{row.reason}</span> },
+    { key: 'reason', header: 'Why it was dropped', width: '46%', render: (row) => <span className="text-[var(--text-3)]">{row.reason}</span> },
   ];
 
   return (
@@ -156,7 +156,7 @@ export default function JobsPage() {
         <div className="space-y-4">
           {hopsError ? <ErrorState error={hopsError} compact /> : null}
           <div>
-            <h3 className="mb-1.5 text-sm font-medium text-zinc-100">Hops</h3>
+            <h3 className="mb-1.5 text-sm font-medium text-[var(--text)]">Hops</h3>
             <DataTable<HopAttempt>
               columns={hopColumns}
               rows={hops.data?.hops ?? []}
@@ -167,7 +167,7 @@ export default function JobsPage() {
             />
           </div>
           <div>
-            <h3 className="mb-1.5 text-sm font-medium text-zinc-100">Candidates dropped before the call</h3>
+            <h3 className="mb-1.5 text-sm font-medium text-[var(--text)]">Candidates dropped before the call</h3>
             <DataTable<RejectedCandidate>
               columns={rejectedColumns}
               rows={hops.data?.rejected ?? []}
@@ -175,12 +175,12 @@ export default function JobsPage() {
               dense
               emptyTitle="Nothing was dropped"
             />
-            <p className="mt-1.5 text-[10px] text-zinc-500">
+            <p className="mt-1.5 text-[10px] text-[var(--text-3)]">
               Without this list the routing decision cannot be reconstructed — a provider that is quiet because it was
               filtered out looks exactly like one that is quiet because it was never needed.
             </p>
           </div>
-          <p className="text-[10px] text-zinc-500">
+          <p className="text-[10px] text-[var(--text-3)]">
             A successful HTTP status with zero records is a failure, not a success. Circuit scope is
             (provider × target type) and backs off from 15 minutes up to a 60-minute ceiling, so no fixed duration is
             shown here.
