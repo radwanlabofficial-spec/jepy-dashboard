@@ -49,8 +49,8 @@ export default function ProvidersPage() {
       width: '18%',
       render: (account) => (
         <div>
-          <span className="font-mono text-[13px] text-zinc-100">{account.account_label}</span>
-          <span className="block text-[10px] text-zinc-500">{account.provider} · {account.quota_period}</span>
+          <span className="font-mono text-[13px] text-[var(--text)]">{account.account_label}</span>
+          <span className="block text-[10px] text-[var(--text-3)]">{account.provider} · {account.quota_period}</span>
         </div>
       ),
     },
@@ -83,7 +83,7 @@ export default function ProvidersPage() {
         account.cooldown_until && account.cooldown_until > Date.now() / 1000 ? (
           <Num value={Math.ceil(account.cooldown_until - Date.now() / 1000)} unit="s" />
         ) : (
-          <span className="font-mono text-zinc-500">—</span>
+          <span className="font-mono text-[var(--text-3)]">—</span>
         ),
     },
     {
@@ -94,7 +94,7 @@ export default function ProvidersPage() {
       render: (account) => {
         const soon = account.quota_expires_at !== null && account.quota_expires_at - Date.now() / 1000 < 7 * 86_400;
         return (
-          <span className={soon ? 'font-mono tabular-nums text-red-400' : 'font-mono tabular-nums text-zinc-400'} title={formatUtc(account.quota_expires_at)}>
+          <span className={soon ? 'font-mono tabular-nums text-red-400' : 'font-mono tabular-nums text-[var(--text-3)]'} title={formatUtc(account.quota_expires_at)}>
             {account.quota_expires_at === null ? '—' : relativeTime(account.quota_expires_at)}
           </span>
         );
@@ -110,7 +110,7 @@ export default function ProvidersPage() {
         <button
           type="button"
           onClick={() => void toggle.run(account.id, { enabled: account.enabled === 1 ? 0 : 1 })}
-          className="text-[13px] text-zinc-400 underline decoration-zinc-700 underline-offset-2 transition-colors duration-150 hover:text-zinc-100"
+          className="text-[13px] text-[var(--text-3)] underline decoration-zinc-700 underline-offset-2 transition-colors duration-150 hover:text-[var(--text)]"
         >
           {account.enabled === 1 ? 'on' : 'off'}
         </button>
@@ -119,22 +119,22 @@ export default function ProvidersPage() {
   ];
 
   const capabilityColumns: Column<CapabilityRow>[] = [
-    { key: 'target', header: 'Target type', width: '22%', render: (row) => <span className="font-mono text-[10px] text-zinc-100">{row.target_type}</span> },
-    { key: 'provider', header: 'Provider', width: '16%', render: (row) => <span className="font-mono text-[10px] text-zinc-400">{row.provider}</span> },
+    { key: 'target', header: 'Target type', width: '22%', render: (row) => <span className="font-mono text-[10px] text-[var(--text)]">{row.target_type}</span> },
+    { key: 'provider', header: 'Provider', width: '16%', render: (row) => <span className="font-mono text-[10px] text-[var(--text-3)]">{row.provider}</span> },
     {
       key: 'cost',
       header: 'Cost / unit',
       align: 'right',
       width: '14%',
       render: (row) => (
-        <span className="cursor-default font-mono tabular-nums text-zinc-400" title="Read-only: cost and unit changes require an ADR">
+        <span className="cursor-default font-mono tabular-nums text-[var(--text-3)]" title="Read-only: cost and unit changes require an ADR">
           {row.unit_type === null ? 'free' : formatMicro(row.cost_micro_per_unit)}
         </span>
       ),
     },
     { key: 'quality', header: 'Quality', align: 'right', width: '10%', render: (row) => <Num value={row.quality * 100} format={(value) => `${value.toFixed(0)}%`} /> },
-    { key: 'latency', header: 'Latency', align: 'right', width: '10%', render: (row) => <Num value={row.avg_latency_ms} format={(value) => `${formatNumber(value)}ms`} className="text-zinc-400" /> },
-    { key: 'runner', header: 'Runner', width: '10%', render: (row) => <span className="text-zinc-400">{row.runner}</span> },
+    { key: 'latency', header: 'Latency', align: 'right', width: '10%', render: (row) => <Num value={row.avg_latency_ms} format={(value) => `${formatNumber(value)}ms`} className="text-[var(--text-3)]" /> },
+    { key: 'runner', header: 'Runner', width: '10%', render: (row) => <span className="text-[var(--text-3)]">{row.runner}</span> },
     {
       key: 'credential',
       header: 'Credential',
@@ -161,7 +161,7 @@ export default function ProvidersPage() {
         title="Providers"
         description="Read-only monitoring. Credentials are never entered here."
         actions={
-          <Link to="/vault?new=1" className="text-[13px] text-zinc-400 underline decoration-zinc-700 underline-offset-2 transition-colors duration-150 hover:text-zinc-100">
+          <Link to="/vault?new=1" className="text-[13px] text-[var(--text-3)] underline decoration-zinc-700 underline-offset-2 transition-colors duration-150 hover:text-[var(--text)]">
             Add an account in Vault
           </Link>
         }
@@ -172,13 +172,13 @@ export default function ProvidersPage() {
       <Card title="Pool" subtitle="The account pool is a floor, not a ceiling: adding a partner's key is routine, not an exception.">
         <div className="grid grid-cols-5 gap-3">
           {(pools.data ?? []).map((pool) => (
-            <div key={pool.provider} className="rounded-md border border-zinc-800 bg-zinc-950/40 p-2">
-              <p className="font-mono text-[13px] text-zinc-100">{pool.provider}</p>
-              <p className="mt-0.5 text-[10px] text-zinc-500">
+            <div key={pool.provider} className="rounded-md border border-[var(--border)] bg-[var(--bg-hover)] p-2">
+              <p className="font-mono text-[13px] text-[var(--text)]">{pool.provider}</p>
+              <p className="mt-0.5 text-[10px] text-[var(--text-3)]">
                 {pool.keyless === 1 ? 'keyless' : `${formatNumber(pool.account_count)} accounts`}
                 {pool.single_account === 1 ? ' · single, forever' : ''}
               </p>
-              <p className="mt-1 font-mono text-[10px] tabular-nums text-zinc-400">
+              <p className="mt-1 font-mono text-[10px] tabular-nums text-[var(--text-3)]">
                 {formatNumber(pool.quota_used)} / {formatNumber(pool.quota_total)} {pool.unit_type ?? ''}
               </p>
             </div>
@@ -213,7 +213,7 @@ export default function ProvidersPage() {
             </div>
           ))}
         </div>
-        <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-zinc-500">
+        <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-[var(--text-3)]">
           {(credits.data?.by_unit ?? []).map((point) => (
             <li key={`${point.account_label}-${point.unit_type}`} className="font-mono">
               {point.account_label} · {point.unit_type} · {formatNumber(point.units)} units = {formatNumber(point.credits)} credits
@@ -233,7 +233,7 @@ export default function ProvidersPage() {
         />
       </Card>
 
-      <p className="text-[10px] text-zinc-500">
+      <p className="text-[10px] text-[var(--text-3)]">
         There is no auto-recharge switch on this page and there never will be: a hard stop at zero credits is the only
         billing protection that cannot fail quietly.
       </p>
