@@ -203,17 +203,7 @@ export default function Sidebar({ me, meta }: SidebarProps) {
 
       {/* Collapse + user */}
       <div className="border-t border-white/[.07] p-3">
-        <button
-          id="collapseBtn"
-          onClick={() => setCollapsed((c) => !c)}
-          className="jepy-nav-item w-[calc(100%-20px)]"
-          title={collapsed ? 'Expand sidebar ( [ )' : 'Collapse sidebar ( [ )'}
-          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-        >
-          {collapsed ? <ChevronRight aria-hidden="true" /> : <ChevronLeft aria-hidden="true" />}
-          <span className="cb-text nav-text flex-1 text-left">Collapse deck</span>
-        </button>
-        <div className="sidebar-foot nav-text mt-2 flex items-center gap-2.5 px-2.5">
+        <div className="sidebar-foot nav-text flex items-center gap-2.5 px-2.5">
           <div className="avatar flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#7ed321] to-[#10b981] text-[13px] font-bold text-[#07130a]">
             {(me?.email ?? 'R').charAt(0).toUpperCase()}
           </div>
