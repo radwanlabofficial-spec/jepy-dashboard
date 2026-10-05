@@ -78,18 +78,18 @@ export default function LeadsPage() {
         <div className="min-w-0">
           <Link
             to={`/leads/${lead.id}`}
-            className="block truncate text-zinc-100 underline decoration-zinc-700 underline-offset-2 transition-colors duration-150 hover:text-green-400"
+            className="block truncate text-[var(--text)] underline decoration-zinc-700 underline-offset-2 transition-colors duration-150 hover:text-green-400"
           >
             {lead.name}
           </Link>
-          <span className="block truncate font-mono text-[10px] text-zinc-500">
+          <span className="block truncate font-mono text-[10px] text-[var(--text-3)]">
             {lead.domain ?? 'no website'}
           </span>
         </div>
       ),
     },
-    { key: 'city', header: 'City', width: '10%', render: (lead) => <span className="text-zinc-400">{lead.city ?? '—'}</span> },
-    { key: 'niche', header: 'Niche', width: '10%', render: (lead) => <span className="text-zinc-400">{lead.niche}</span> },
+    { key: 'city', header: 'City', width: '10%', render: (lead) => <span className="text-[var(--text-3)]">{lead.city ?? '—'}</span> },
+    { key: 'niche', header: 'Niche', width: '10%', render: (lead) => <span className="text-[var(--text-3)]">{lead.niche}</span> },
     {
       key: 'tier',
       header: 'Tier',
@@ -108,7 +108,7 @@ export default function LeadsPage() {
       header: 'Rule',
       align: 'right',
       width: '8%',
-      render: (lead) => <Num value={lead.rule_score} className="text-zinc-400" />,
+      render: (lead) => <Num value={lead.rule_score} className="text-[var(--text-3)]" />,
     },
     {
       key: 'email',
@@ -131,7 +131,7 @@ export default function LeadsPage() {
         </span>
       ),
     },
-    { key: 'updated', header: 'Updated', align: 'right', width: '10%', render: (lead) => <span className="text-[10px] text-zinc-500">{relativeTime(lead.updated_at)}</span> },
+    { key: 'updated', header: 'Updated', align: 'right', width: '10%', render: (lead) => <span className="text-[10px] text-[var(--text-3)]">{relativeTime(lead.updated_at)}</span> },
   ];
 
   return (
@@ -158,13 +158,13 @@ export default function LeadsPage() {
       <Card padding="compact" title="Filters" subtitle="URL-backed — refresh keeps them">
         <div className="grid grid-cols-6 gap-2">
           <input
-            className="col-span-2 h-7 rounded-md border border-zinc-700 bg-zinc-800 px-2 text-[13px] text-zinc-100 placeholder:text-zinc-500 focus-visible:border-zinc-700 focus-visible:ring-1 focus-visible:ring-green-400"
+            className="col-span-2 h-7 rounded-md border border-[var(--border)] bg-[var(--panel)] px-3 text-[13px] text-[var(--text)] placeholder:text-[var(--text-3)] focus-visible:border-[var(--border)] focus-visible:ring-1 focus-visible:ring-green-400"
             placeholder="Free text — name, domain, city"
             value={filter.q ?? ''}
             onChange={(event) => setFilter('q', event.target.value)}
           />
           <select
-            className="h-7 rounded-md border border-zinc-700 bg-zinc-800 px-2 text-[13px] text-zinc-100 focus-visible:ring-1 focus-visible:ring-green-400"
+            className="h-7 rounded-md border border-[var(--border)] bg-[var(--panel)] px-3 text-[13px] text-[var(--text)] focus-visible:ring-1 focus-visible:ring-green-400"
             value={filter.tier ?? ''}
             onChange={(event) => setFilter('tier', event.target.value)}
           >
@@ -174,7 +174,7 @@ export default function LeadsPage() {
             <option value="COLD">COLD</option>
           </select>
           <select
-            className="h-7 rounded-md border border-zinc-700 bg-zinc-800 px-2 text-[13px] text-zinc-100 focus-visible:ring-1 focus-visible:ring-green-400"
+            className="h-7 rounded-md border border-[var(--border)] bg-[var(--panel)] px-3 text-[13px] text-[var(--text)] focus-visible:ring-1 focus-visible:ring-green-400"
             value={filter.status ?? ''}
             onChange={(event) => setFilter('status', event.target.value)}
           >
@@ -186,16 +186,16 @@ export default function LeadsPage() {
             <option value="discarded">discarded</option>
           </select>
           <input
-            className="h-7 rounded-md border border-zinc-700 bg-zinc-800 px-2 text-[13px] text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-1 focus-visible:ring-green-400"
+            className="h-7 rounded-md border border-[var(--border)] bg-[var(--panel)] px-3 text-[13px] text-[var(--text)] placeholder:text-[var(--text-3)] focus-visible:ring-1 focus-visible:ring-green-400"
             placeholder="Min score"
             inputMode="numeric"
             value={filter.min_score ?? ''}
             onChange={(event) => setFilter('min_score', event.target.value.replace(/[^0-9]/g, ''))}
           />
-          <label className="flex h-7 items-center gap-2 text-[13px] text-zinc-400">
+          <label className="flex h-7 items-center gap-2 text-[13px] text-[var(--text-3)]">
             <input
               type="checkbox"
-              className="h-3.5 w-3.5 rounded border-zinc-700 bg-zinc-800 focus-visible:ring-1 focus-visible:ring-green-400"
+              className="h-3.5 w-3.5 rounded border-[var(--border)] bg-[var(--bg-hover)] focus-visible:ring-1 focus-visible:ring-green-400"
               checked={filter.has_email === '1'}
               onChange={(event) => setFilter('has_email', event.target.checked ? '1' : '')}
             />
@@ -225,7 +225,7 @@ export default function LeadsPage() {
         />
       </Card>
 
-      <p className="text-[10px] text-zinc-500">
+      <p className="text-[10px] text-[var(--text-3)]">
         A missing signal shows as “—” and never as 0: “not probed yet” and “probed, empty result” are different facts,
         and the whole provisional-tier rule depends on keeping them apart.
       </p>
