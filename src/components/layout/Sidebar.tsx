@@ -56,7 +56,7 @@ const NAV_SYSTEM: NavItem[] = [
 function NavGroup({ label, items }: { label: string; items: NavItem[] }) {
   return (
     <>
-      <div className="nav-label px-7 pt-4 pb-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#475569] transition-all duration-300">
+      <div className="nav-label px-7 pt-4 pb-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--side-text-3)] transition-all duration-300">
         {label}
       </div>
       {items.map((item) => {
@@ -76,7 +76,7 @@ function NavGroup({ label, items }: { label: string; items: NavItem[] }) {
                 {item.badge}
               </span>
             ) : item.kbd ? (
-              <span className="nav-kbd nav-text ml-auto font-mono text-[9.5px] text-[#43536b]">{item.kbd}</span>
+              <span className="nav-kbd nav-text ml-auto font-mono text-[9.5px] text-[var(--side-text-3)]">{item.kbd}</span>
             ) : null}
           </NavLink>
         );
@@ -150,7 +150,7 @@ export default function Sidebar({ me, meta }: SidebarProps) {
           Jepy
         </span>
         <div className="logo-text flex items-center overflow-hidden transition-all duration-300">
-          <span className="logo-sub text-[18px] font-bold uppercase tracking-[0.18em] text-[#e2e8f0]">leads</span>
+          <span className="logo-sub text-[18px] font-bold uppercase tracking-[0.18em] text-[var(--side-text)]">leads</span>
         </div>
         <img
           src="/favicon.webp"
@@ -202,16 +202,16 @@ export default function Sidebar({ me, meta }: SidebarProps) {
       </nav>
 
       {/* Collapse + user */}
-      <div className="border-t border-white/[.07] p-3">
+      <div className="border-t border-[var(--side-border)] p-3">
         <div className="sidebar-foot nav-text flex items-center gap-2.5 px-2.5">
           <div className="avatar flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#7ed321] to-[#10b981] text-[13px] font-bold text-[#07130a]">
             {(me?.email ?? 'R').charAt(0).toUpperCase()}
           </div>
           <div className="user-meta min-w-0 flex-1 overflow-hidden">
-            <div className="n truncate text-[12.5px] font-semibold text-[#e2e8f0]">
+            <div className="n truncate text-[12.5px] font-semibold text-[var(--side-text)]">
               {(me?.email ?? 'operator').split('@')[0]}
             </div>
-            <div className="e truncate text-[10.5px] text-[#64748b]">{me?.email ?? '—'}</div>
+            <div className="e truncate text-[10.5px] text-[var(--side-text-2)]">{me?.email ?? '—'}</div>
           </div>
         </div>
       </div>
