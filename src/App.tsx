@@ -40,7 +40,16 @@ function SessionExpired() {
         <p lang="bn" className="text-[13px] text-zinc-400">
           সেশন শেষ — আবার login করুন
         </p>
-        <Button variant="primary" onClick={() => window.location.reload()}>
+        <Button
+          variant="primary"
+          onClick={() => {
+            // A plain reload() can serve the cached page without re-validating
+            // the Cloudflare Access session. A full navigation to the origin
+            // forces Access to re-check the session and redirect to login when
+            // it has expired.
+            window.location.href = '/';
+          }}
+        >
           Reload
         </Button>
       </div>
