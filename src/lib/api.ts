@@ -241,6 +241,8 @@ export const api = {
 
   vault: {
     credentials: (): Promise<Credential[]> => (isDemoMode ? Promise.resolve(demo.credentials) : request<Credential[]>('/api/vault/credentials')),
+    apifyUsage: (): Promise<{ accounts: Array<Record<string, unknown>> }> =>
+      (isDemoMode ? Promise.resolve({ accounts: [] }) : request<{ accounts: Array<Record<string, unknown>> }>('/api/vault/apify-usage')),
     create: (body: { account_label: string; key_name: string; secret: string }): Promise<{ id: string; test_status: Credential['test_status'] }> => {
       if (!isDemoMode) return request('/api/vault/credentials', { method: 'POST', body });
       const account = demo.providerAccounts.find((row) => row.account_label === body.account_label);
