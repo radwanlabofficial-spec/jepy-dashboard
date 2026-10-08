@@ -98,7 +98,7 @@ export default function Sidebar({ me, meta }: SidebarProps) {
       return false;
     }
   });
-  const [quotaPct, setQuotaPct] = useState(0);
+  const [quotaPct, setQuotaPct] = useState<number | null>(null);
 
   useEffect(() => {
     document.body.classList.toggle('sb-collapsed', collapsed);
@@ -107,10 +107,22 @@ export default function Sidebar({ me, meta }: SidebarProps) {
     } catch { /* ignore */ }
   }, [collapsed]);
 
-  // Animate the D1 quota bar on mount
+  // Fetch live D1 quota from the Worker (real Cloudflare analytics, not hardcoded)
   useEffect(() => {
-    const t = setTimeout(() => setQuotaPct(94), 400);
-    return () => clearTimeout(t);
+    let cancelled = false;
+    const fetchQuota = async () => {
+      try {
+        const res = await fetch('/api/system/d1-usage');
+        if (!res.ok) return;
+        const json = await res.json();
+        if (json.ok && typeof json.data?.read_pct === 'number' && !cancelled) {
+          setQuotaPct(json.data.read_pct);
+        }
+      } catch { /* show — on failure */ }
+    };
+    fetchQuota();
+    const t = setInterval(fetchQuota, 5 * 60 * 1000); // refresh every 5 min
+    return () => { cancelled = true; clearInterval(t); };
   }, []);
 
   // Keyboard shortcut: [ toggles sidebar
@@ -179,10 +191,10 @@ export default function Sidebar({ me, meta }: SidebarProps) {
         </div>
         <div className="ops-row mb-1 flex items-center justify-between text-[11.5px]">
           <span className="text-[#94a3b8]">D1 quota</span>
-          <span className="font-mono text-[10.5px] text-[#f59e0b]">{quotaPct}%</span>
+          <span className="font-mono text-[10.5px] text-[#f59e0b]">{quotaPct !== null ? `${quotaPct}%` : '—'}</span>
         </div>
-        <div className="ops-bar mb-2.5" role="progressbar" aria-valuenow={quotaPct} aria-valuemin={0} aria-valuemax={100}>
-          <div className="fill" style={{ width: `${quotaPct}%` }} />
+        <div className="ops-bar mb-2.5" role="progressbar" aria-valuenow={quotaPct ?? 0} aria-valuemin={0} aria-valuemax={100}>
+          <div className="fill" style={{ width: `${quotaPct ?? 0}%` }} />
         </div>
         <div className="ops-spark" aria-hidden="true">
           {Array.from({ length: 20 }, (_, i) => (
