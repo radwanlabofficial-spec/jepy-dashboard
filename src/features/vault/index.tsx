@@ -62,19 +62,42 @@ export default function VaultPage() {
 
   const error = useErrorMessage(credentials.error ?? pools.error ?? test.error ?? rotate.error ?? remove.error);
 
+  // Live Apify usage per account (username, plan, limits) — like Content OS settings
+  const apifyUsage = useQuery('vault:apify-usage', () => api.vault.apifyUsage(), { staleTime: 60_000 });
+  const usageByAccount = new Map((apifyUsage.data?.accounts ?? []).map((a: any) => [a.account_label, a]));
+
   const columns: Column<Credential>[] = [
-    { key: 'provider', header: 'Provider', width: '12%', render: (row) => <span className="font-mono text-[13px] text-[var(--text)]">{row.provider}</span> },
-    { key: 'account', header: 'Account', width: '16%', render: (row) => <span className="font-mono text-[10px] text-[var(--text-3)]">{row.account_label}</span> },
-    { key: 'key', header: 'Key name', width: '12%', render: (row) => <span className="font-mono text-[10px] text-[var(--text-3)]">{row.key_name}</span> },
+    { key: 'provider', header: 'Provider', width: '10%', render: (row) => <span className="font-mono text-[13px] text-[var(--text)]">{row.provider}</span> },
+    { key: 'account', header: 'Account', width: '12%', render: (row) => <span className="font-mono text-[10px] text-[var(--text-3)]">{row.account_label}</span> },
+    { key: 'key', header: 'Key name', width: '10%', render: (row) => <span className="font-mono text-[10px] text-[var(--text-3)]">{row.key_name}</span> },
     {
       key: 'last4',
       header: 'Masked',
-      width: '12%',
+      width: '10%',
       render: (row) => (
         <span className="font-mono text-[13px] text-[var(--text)]" title="Only the last four characters ever leave the server">
           {'••••'}{row.has_credential === 1 ? row.last4 : ''}
         </span>
       ),
+    },
+    {
+      key: 'usage',
+      header: 'Usage / Limits',
+      width: '22%',
+      render: (row) => {
+        if (row.provider !== 'apify') return <span className="text-[10px] text-[var(--text-3)]">—</span>;
+        const u = usageByAccount.get(row.account_label) as any;
+        if (!u) return <span className="text-[10px] text-[var(--text-3)]">loading…</span>;
+        if (u.error) return <span className="text-[10px] text-red-400">{u.error}</span>;
+        return (
+          <div className="text-[10px] leading-tight">
+            <div className="font-mono text-[var(--text)]">{u.username ?? '—'} <span className="text-[var(--text-3)]">({u.plan_id})</span></div>
+            <div className="text-[var(--text-3)]">
+              {u.monthly_limit_usd ? `$${u.monthly_limit_usd}/mo` : '—'} · {u.compute_units_limit ? `${u.compute_units_limit} CU` : '—'}
+            </div>
+          </div>
+        );
+      },
     },
     { key: 'test', header: 'Test', width: '10%', render: (row) => <StatusPill status={row.test_status} /> },
     { key: 'tested', header: 'Last tested', align: 'right', width: '12%', render: (row) => <span className="text-[10px] text-[var(--text-3)]" title={formatUtc(row.last_tested_at)}>{relativeTime(row.last_tested_at)}</span> },
