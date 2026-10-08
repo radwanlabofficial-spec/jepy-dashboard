@@ -116,7 +116,6 @@ function Shell() {
             <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </ErrorBoundary>
-          <AttributionFooter />
         </main>
       </div>
       <CommandPalette />
