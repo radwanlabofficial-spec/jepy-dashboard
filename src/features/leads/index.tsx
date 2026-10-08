@@ -54,7 +54,9 @@ export default function LeadsPage() {
   );
 
   const filterKey = params.toString();
-  const leads = useQuery(`leads:list:${filterKey}`, () => api.leads.list(filter), { staleTime: 30_000 });
+  // Request 100 leads per page so the user sees more than a handful.
+  // The API supports `limit` param; default is too small for 8k+ leads.
+  const leads = useQuery(`leads:list:${filterKey}`, () => api.leads.list({ ...filter, limit: '100' }), { staleTime: 30_000 });
   const exportCsv = useMutation(api.leads.exportCsv, {
     onSuccess: (result) => toast.push(`Export ready — ${result.row_count} rows`),
   });
