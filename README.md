@@ -138,3 +138,5 @@ their exact paths and are never rewritten to HTML.
 Place data comes from the Overture Maps Foundation (CDLA-Permissive 2.0) and
 Foursquare OS Places (Apache-2.0). The footer attribution is a licence condition
 and is permanently visible; ODbL-derived fields are export-gated.
+
+<!-- rebuild 2026-10-08 22:20 -->
