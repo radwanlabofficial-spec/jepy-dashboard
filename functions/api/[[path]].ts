@@ -53,6 +53,10 @@ export const onRequest = async (context: { request: Request; env: Env }): Promis
   // the URL; passing the console's hostname through would make the Worker see a
   // request that looks like it came from a hostname it does not serve.
   headers.delete('host');
+  // Temporary open-console mode: tells the Worker this request came through the
+  // dashboard's own proxy (not a direct external call). The Worker checks
+  // CONSOLE_OPEN=1 before honoring it. Remove when Access is re-enabled.
+  headers.set('X-Console-Open', '1');
 
   const init: RequestInit = { method: request.method, headers, redirect: 'manual' };
   if (request.method !== 'GET' && request.method !== 'HEAD') {
