@@ -115,7 +115,13 @@ export const api = {
         const qs = new URLSearchParams(
           Object.entries(filter).filter(([, v]) => v !== undefined && v !== '') as [string, string][],
         ).toString();
-        return request<{ rows: Lead[]; total: number }>(`/api/leads${qs ? `?${qs}` : ''}`);
+        // The Worker returns {ok, data: Lead[], meta: {has_more, ...}} — the
+        // array is in `data`, not `{rows, total}`. Adapt here so the page
+        // sees the shape it expects.
+        return request<Lead[]>(`/api/leads${qs ? `?${qs}` : ''}`).then((rows) => ({
+          rows: Array.isArray(rows) ? rows : [],
+          total: Array.isArray(rows) ? rows.length : 0,
+        }));
       }
       const rows = demo.leads.filter((lead) => {
         if (filter.tier && lead.tier !== filter.tier) return false;
