@@ -43,11 +43,22 @@ function SessionExpired() {
         <Button
           variant="primary"
           onClick={() => {
-            // A plain reload() can serve the cached page without re-validating
-            // the Cloudflare Access session. A full navigation to the origin
-            // forces Access to re-check the session and redirect to login when
-            // it has expired.
-            window.location.href = '/';
+            // Clear Cloudflare Access cookies so a stale session can't stick.
+            // CF_Authorization is HttpOnly (JS can't delete it), but clearing
+            // all JS-accessible cookies + localStorage + a cache-busting
+            // navigation forces Access to re-validate and redirect to login.
+            try {
+              document.cookie.split(';').forEach((c) => {
+                const name = c.split('=')[0].trim();
+                document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+                document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=${location.hostname}`;
+              });
+              localStorage.clear();
+              sessionStorage.clear();
+            } catch { /* best effort */ }
+            // Cache-busting navigation: forces the browser + Access to
+            // re-validate instead of serving the cached "Session ended" page.
+            window.location.href = '/?t=' + Date.now();
           }}
         >
           Reload
