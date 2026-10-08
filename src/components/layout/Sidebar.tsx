@@ -121,7 +121,7 @@ export default function Sidebar({ me, meta }: SidebarProps) {
       } catch { /* show — on failure */ }
     };
     fetchQuota();
-    const t = setInterval(fetchQuota, 5 * 60 * 1000); // refresh every 5 min
+    const t = setInterval(fetchQuota, 15 * 60 * 1000); // refresh every 15 min (D1 saver)
     return () => { cancelled = true; clearInterval(t); };
   }, []);
 
@@ -146,8 +146,8 @@ export default function Sidebar({ me, meta }: SidebarProps) {
 
   return (
     <aside className="jepy-sidebar" data-component="sidebar" aria-label="Primary">
-      {/* Brand */}
-      <div className="side-top flex h-[68px] items-center gap-2.5 border-b border-[var(--side-border)] px-5 transition-all duration-300">
+      {/* Brand - click to go to overview */}
+      <div className="side-top flex h-[68px] items-center gap-2.5 border-b border-[var(--side-border)] px-5 transition-all duration-300 cursor-pointer" onClick={() => window.location.href = '/'}>
         <span className="brand-pill">
           <img
             src="/jepy-logo.png"
