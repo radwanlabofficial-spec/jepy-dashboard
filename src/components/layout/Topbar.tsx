@@ -180,7 +180,8 @@ export default function Topbar({ me, meta, mtdCostMicro, budgetMicro, cashGuardM
         onClick={() => navigate('/settings')}
       >
         <Bell size={17} aria-hidden="true" />
-        <span className="n-dot absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-[var(--rose)] ring-2 ring-[var(--panel)]" />
+        {/* Red dot removed: was always-on (fake). Real error indicator needs
+            errors_24h from API; add when D1 budget allows the extra polling. */}
       </button>
 
       <button
