@@ -48,7 +48,7 @@ function KpiCard({ label, children, hint, accent = 'emerald', index = 0, loading
   };
   const card = (
     <div
-      className={`jepy-card jepy-enter relative overflow-hidden p-5 ${to ? 'cursor-pointer hover:shadow-lg transition-shadow' : ''}`}
+      className={`jepy-card jepy-enter relative overflow-hidden p-4 ${to ? 'cursor-pointer hover:shadow-lg transition-shadow' : ''}`}
       style={{ animationDelay: `${index * 70}ms` }}
       data-component="kpi-card"
       onClick={to ? () => window.location.href = to : undefined}
