@@ -169,6 +169,7 @@ export default function LeadDetailPage() {
                 ['city', record?.city],
                 ['niche', record?.niche],
                 ['email', record?.email],
+                ['phone', (record as any)?.phone],
                 ['source_url', record?.source_url],
                 ['lawful_basis', record?.lawful_basis],
               ] as [string, string | null | undefined][]).map(([field, value]) => (
