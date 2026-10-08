@@ -31,13 +31,14 @@ const errorMessages: Record<string, string> = {
 
 import Skeleton from '../../components/common/Skeleton';
 
-function KpiCard({ label, children, hint, accent = 'emerald', index = 0, loading = false }: {
+function KpiCard({ label, children, hint, accent = 'emerald', index = 0, loading = false, to }: {
   label: string;
   children: React.ReactNode;
   hint?: string;
   accent?: 'emerald' | 'amber' | 'violet' | 'rose';
   index?: number;
   loading?: boolean;
+  to?: string;
 }) {
   const accents = {
     emerald: 'from-[#10b981] to-[#34d399]',
@@ -45,11 +46,12 @@ function KpiCard({ label, children, hint, accent = 'emerald', index = 0, loading
     violet: 'from-[#8b5cf6] to-[#a78bfa]',
     rose: 'from-[#f43f5e] to-[#fb7185]',
   };
-  return (
+  const card = (
     <div
-      className="jepy-card jepy-enter relative overflow-hidden p-5"
+      className={`jepy-card jepy-enter relative overflow-hidden p-5 ${to ? 'cursor-pointer hover:shadow-lg transition-shadow' : ''}`}
       style={{ animationDelay: `${index * 70}ms` }}
       data-component="kpi-card"
+      onClick={to ? () => window.location.href = to : undefined}
     >
       <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${accents[accent]}`} />
       <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-[var(--text-3)]">{label}</p>
@@ -230,19 +232,19 @@ export default function OverviewPage() {
 
       {/* KPI grid */}
       <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
-        <KpiCard label="Total leads" hint={`${formatNumber(s?.new_today ?? null)} new today`} accent="emerald" index={0} loading={stats.loading && !s}>
+        <KpiCard label="Total leads" hint={`${formatNumber(s?.new_today ?? null)} new today`} accent="emerald" index={0} loading={stats.loading && !s} to="/leads">
           {formatNumber(s?.total ?? null)}
         </KpiCard>
-        <KpiCard label="Hot leads" hint="tier HOT · ready for outreach" accent="rose" index={1} loading={stats.loading && !s}>
+        <KpiCard label="Hot leads" hint="tier HOT · ready for outreach" accent="rose" index={1} loading={stats.loading && !s} to="/leads?tier=HOT">
           <span className="flex items-center gap-2">
             {formatNumber(hotCount)}
             <Users size={16} className="text-[var(--text-3)]" aria-hidden="true" />
           </span>
         </KpiCard>
-        <KpiCard label="Queue depth" hint={meta.data ? `oldest pending ${relativeTime(Date.now() / 1000 - meta.data.oldest_pending_sec)}` : undefined} accent="violet" index={2} loading={meta.loading && !meta.data}>
+        <KpiCard label="Queue depth" hint={meta.data ? `oldest pending ${relativeTime(Date.now() / 1000 - meta.data.oldest_pending_sec)}` : undefined} accent="violet" index={2} loading={meta.loading && !meta.data} to="/jobs">
           {formatNumber(meta.data?.queue_depth ?? null)}
         </KpiCard>
-        <KpiCard label="MTD spend" hint={`guard trips at ${formatMicro(60_000_000, 0)}`} accent="amber" index={3} loading={stats.loading && !s}>
+        <KpiCard label="MTD spend" hint={`guard trips at ${formatMicro(60_000_000, 0)}`} accent="amber" index={3} loading={stats.loading && !s} to="/providers">
           {formatMicro(s?.mtd_cost_micro ?? null)}
         </KpiCard>
       </div>
