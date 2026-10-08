@@ -6,7 +6,7 @@
  */
 
 import { Link } from 'react-router-dom';
-import { AlertTriangle, ArrowRight, Clock, Database, Sparkles, Users, Zap } from 'lucide-react';
+import { AlertTriangle, ArrowRight, Clock, Database, RefreshCw, Sparkles, Users, Zap } from 'lucide-react';
 import { api } from '../../lib/api';
 import { BD_DAILY_GUARD, BD_MONTHLY_PCT_LINE, POLLING } from '../../lib/constants';
 import { formatMicro, formatNumber, relativeTime } from '../../lib/format';
@@ -173,6 +173,18 @@ export default function OverviewPage() {
             </p>
           </div>
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => {
+                stats.refetch();
+                meta.refetch();
+                credits.refetch();
+              }}
+              className="flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 py-3 text-[13.5px] font-semibold text-white backdrop-blur transition-all hover:-translate-y-0.5 hover:bg-white/15"
+              title="Manually refresh all data"
+            >
+              <RefreshCw size={16} aria-hidden="true" />
+              Refresh
+            </button>
             <Link
               to="/leads"
               className="flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 py-3 text-[13.5px] font-semibold text-white backdrop-blur transition-all hover:-translate-y-0.5 hover:bg-white/15"
