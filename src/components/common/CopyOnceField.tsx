@@ -45,7 +45,11 @@ export default function CopyOnceField({ value, onDismiss, label = 'Registration 
     <div data-component="copy-once-field" className="space-y-2">
       <p className="text-[10px] uppercase tracking-wide text-zinc-500">{label}</p>
       <div className="flex items-stretch gap-2">
-        <code className="flex-1 select-all break-all rounded-md bg-zinc-800 p-3 font-mono text-[13px] text-zinc-100">
+        <code
+          className="flex-1 cursor-pointer select-all break-all rounded-md bg-zinc-800 p-3 font-mono text-[13px] text-zinc-100 transition-colors hover:bg-zinc-700"
+          onClick={copy}
+          title="Click to copy"
+        >
           {value}
         </code>
         <Button
