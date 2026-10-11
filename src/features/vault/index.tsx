@@ -89,12 +89,32 @@ export default function VaultPage() {
         const u = usageByAccount.get(row.account_label) as any;
         if (!u) return <span className="text-[10px] text-[var(--text-3)]">loading…</span>;
         if (u.error) return <span className="text-[10px] text-red-400">{u.error}</span>;
+        // Calculate usage percentage if available
+        const used = u.usage_usd ?? u.compute_units_used ?? null;
+        const limit = u.monthly_limit_usd ?? u.compute_units_limit ?? null;
+        const pct = (used !== null && limit) ? Math.min(100, (used / limit) * 100) : null;
         return (
           <div className="text-[10px] leading-tight">
             <div className="font-mono text-[var(--text)]">{u.username ?? '—'} <span className="text-[var(--text-3)]">({u.plan_id})</span></div>
-            <div className="text-[var(--text-3)]">
-              {u.monthly_limit_usd ? `$${u.monthly_limit_usd}/mo` : '—'} · {u.compute_units_limit ? `${u.compute_units_limit} CU` : '—'}
-            </div>
+            {pct !== null ? (
+              <div className="mt-1">
+                <div className="flex justify-between text-[9px] text-[var(--text-3)]">
+                  <span>${used?.toFixed(2)} / ${limit}</span>
+                  <span>{pct.toFixed(0)}%</span>
+                </div>
+                <div className="mt-0.5 h-1.5 overflow-hidden rounded-full bg-[var(--border-soft)]">
+                  <div
+                    className={`h-full rounded-full transition-all ${pct > 90 ? 'bg-red-500' : pct > 70 ? 'bg-amber-500' : 'bg-emerald-500'}`}
+                    style={{ width: `${pct}%` }}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="text-[var(--text-3)]">
+                {u.monthly_limit_usd ? `$${u.monthly_limit_usd}/mo` : '—'} · {u.compute_units_limit ? `${u.compute_units_limit} CU` : '—'}
+                <div className="text-[9px] italic">usage data pending</div>
+              </div>
+            )}
           </div>
         );
       },
@@ -106,20 +126,46 @@ export default function VaultPage() {
       key: 'actions',
       header: '',
       align: 'right',
-      width: '15%',
-      render: (row) => (
-        <span className="inline-flex items-center gap-1.5">
-          <Button variant="secondary" loading={test.loading} onClick={() => void test.run(row.id)}>
-            Test
-          </Button>
+      width: '18%',
+      render: (row) => {
+        const enabledKey = `jepy:vault-enabled:${row.id}`;
+        const isEnabled = (() => {
+          try {
+            const v = localStorage.getItem(enabledKey);
+            return v === null ? true : v === '1';
+          } catch { return true; }
+        })();
+        const toggle = () => {
+          try {
+            localStorage.setItem(enabledKey, isEnabled ? '0' : '1');
+            window.location.reload();
+          } catch { /* ignore */ }
+        };
+        return (
+          <span className="inline-flex items-center gap-1.5">
+            <button
+              onClick={toggle}
+              title={isEnabled ? 'Disable' : 'Enable'}
+              className={`rounded-md px-2 py-1 text-[11px] font-medium transition-colors ${
+                isEnabled
+                  ? 'bg-emerald-500/15 text-emerald-600 border border-emerald-500/30'
+                  : 'bg-[var(--border-soft)] text-[var(--text-3)] border border-[var(--border)]'
+              }`}
+            >
+              {isEnabled ? '● on' : '○ off'}
+            </button>
+            <Button variant="secondary" loading={test.loading} onClick={() => void test.run(row.id)}>
+              Test
+            </Button>
           <Button variant="secondary" onClick={() => setRotating(row)} disabled={row.has_credential === 0}>
             Rotate
           </Button>
           <Button variant="ghost" onClick={() => void remove.run(row.id)}>
             Delete
           </Button>
-        </span>
-      ),
+          </span>
+        );
+      },
     },
   ];
 
