@@ -60,7 +60,7 @@ export default function Dialog({ open, title, onClose, children, footer, width =
   const widthClass = width === 'sm' ? 'max-w-sm' : width === 'lg' ? 'max-w-3xl' : 'max-w-xl';
 
   return (
-    <div data-component="dialog" className="fixed inset-0 z-50 flex items-start justify-center pt-16">
+    <div data-component="dialog" className="fixed inset-0 z-[100] flex items-start justify-center pt-16">
       <button
         type="button"
         aria-label="Close dialog"
