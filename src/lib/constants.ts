@@ -79,7 +79,7 @@ export const TIER_BOUNDS = { HOT: 70, WARM_MIN: 40, WARM_MAX: 69 } as const;
 
 export const YELP_RULE_SCORE_FLOOR = 55;
 
-export const POLLING = { jobs: 60_000, overview: 120_000 } as const;
+export const POLLING = { jobs: 0, overview: 0 } as const; // Event-driven: manual refresh only (D1 saver)
 
 export const STALE_TIME = { table: 30_000, queue: 5_000 } as const;
 
