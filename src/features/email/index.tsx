@@ -92,6 +92,33 @@ export default function EmailPage() {
 
       {error ? <ErrorState error={error} onRetry={campaigns.refetch} compact /> : null}
 
+      {/* Email Data Source & Organization Plan */}
+      <Card title="Where emails come from & how they're organized" subtitle="data flow plan">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div>
+            <h4 className="mb-2 text-[13px] font-semibold text-[var(--text)]">Sources</h4>
+            <ul className="space-y-1.5 text-[12px] text-[var(--text-2)]">
+              <li className="flex gap-2"><span className="text-emerald-500">→</span> <span><strong>Extension captures:</strong> Email extracted from webpages you visit (via Captures page pairing)</span></li>
+              <li className="flex gap-2"><span className="text-emerald-500">→</span> <span><strong>Directory imports:</strong> Bulk lead lists from Sources page (Yelp, BBB, etc.)</span></li>
+              <li className="flex gap-2"><span className="text-emerald-500">→</span> <span><strong>Manual additions:</strong> Hand-added via Leads page</span></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="mb-2 text-[13px] font-semibold text-[var(--text)]">Organization</h4>
+            <ul className="space-y-1.5 text-[12px] text-[var(--text-2)]">
+              <li className="flex gap-2"><span className="text-violet-500">→</span> <span><strong>By verification:</strong> VALID → safe to send · RISKY → review first · INVALID → suppressed automatically</span></li>
+              <li className="flex gap-2"><span className="text-violet-500">→</span> <span><strong>By tier:</strong> HOT leads get priority verification (ZeroBounce pool)</span></li>
+              <li className="flex gap-2"><span className="text-violet-500">→</span> <span><strong>By niche:</strong> Grouped for targeted campaigns</span></li>
+              <li className="flex gap-2"><span className="text-violet-500">→</span> <span><strong>Suppression:</strong> Bounces, complaints, and manual blocks — checked before every send</span></li>
+            </ul>
+          </div>
+        </div>
+        <p className="mt-3 border-t border-[var(--border-soft)] pt-3 text-[11px] text-[var(--text-3)]">
+          Verification pipeline: Apify Verifier #1 (free, syntax+MX) → Verifier #2 (risky cases) → ZeroBounce (HOT tier only).
+          An email is never verified twice — results are cached.
+        </p>
+      </Card>
+
       <div className="grid grid-cols-3 gap-3">
         <Card padding="compact" title="Complaint line" subtitle={`pause above ${COMPLAINT_RATE_LINE}%`}>
           <Num value={(campaigns.data ?? []).reduce((peak, row) => Math.max(peak, row.complaint_rate), 0)} format={(value) => `${value.toFixed(2)}%`} className="text-base" />
