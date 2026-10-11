@@ -49,6 +49,11 @@ export default function ScoringPage() {
 
   const error = useErrorMessage(weights.error ?? history.error ?? usage.error ?? newVersion.error ?? rescore.error);
 
+  // v1 creation date = oldest updated_at among the active-version rows.
+  const v1CreatedAt = weights.data && weights.data.length > 0
+    ? Math.min(...weights.data.map((row) => row.updated_at))
+    : null;
+
   const weightColumns: Column<WeightRow>[] = [
     { key: 'signal', header: 'Signal', width: '24%', render: (row) => <span className="font-mono text-[13px] text-[var(--text)]">{row.signal_key}</span> },
     { key: 'label', header: 'Meaning', width: '30%', render: (row) => <span className="text-[var(--text-3)]">{row.label}</span> },
@@ -76,6 +81,67 @@ export default function ScoringPage() {
       />
 
       {error ? <ErrorState error={error} onRetry={weights.refetch} compact /> : null}
+
+      {/* Version banner: v1 is old, weights are versioned, new versions are immutable */}
+      <div
+        data-component="scoring-version-banner"
+        className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-500/25 bg-amber-500/[0.06] px-4 py-3"
+      >
+        <div className="min-w-0">
+          <p className="text-[13px] font-medium text-[var(--text)]">
+            Active weights are v{weights.data?.[0]?.weights_version ?? 1}
+            {v1CreatedAt ? (
+              <>
+                {' '}· created <span title={formatUtc(v1CreatedAt)}>{relativeTime(v1CreatedAt)}</span>
+              </>
+            ) : null}
+          </p>
+          <p className="mt-0.5 text-[12px] text-[var(--text-3)]">
+            Weights are versioned: old versions stay in place so any past score can be explained and rolled back.
+            Rows are never edited — a change always produces a new immutable version.
+          </p>
+        </div>
+        <Button variant="secondary" icon={<Plus size={12} aria-hidden="true" />} onClick={() => setVersionOpen(true)}>
+          Propose new version
+        </Button>
+      </div>
+
+      {/* Live plan: how scoring runs in production */}
+      <Card title="How scoring goes live" subtitle="the two passes every lead goes through">
+        <ol className="space-y-2">
+          <li className="flex gap-3">
+            <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 font-mono text-[10px] font-semibold text-emerald-400">0</span>
+            <div>
+              <p className="text-[13px] font-medium text-[var(--text)]">Pass 0 — rule-based scoring (instant)</p>
+              <p className="text-[12px] text-[var(--text-3)]">
+                Runs the moment a lead is ingested. Signals (mobile-friendliness, email presence, job postings, niche
+                fit) are combined with the weights above into a final score and tier — no AI call, no queue.
+              </p>
+            </div>
+          </li>
+          <li className="flex gap-3">
+            <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-violet-500/15 font-mono text-[10px] font-semibold text-violet-400">1</span>
+            <div>
+              <p className="text-[13px] font-medium text-[var(--text)]">Pass 1 — AI scoring via Manifest (queued)</p>
+              <p className="text-[12px] text-[var(--text-3)]">
+                Queued for eligible leads and picked up by the worker's 5-minute cron. Manifest returns an AI score
+                that refines the rule score; usage and cost are tracked in the AI usage panel below and capped by the
+                daily gate in Settings.
+              </p>
+            </div>
+          </li>
+          <li className="flex gap-3">
+            <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-500/15 font-mono text-[10px] font-semibold text-amber-400">v</span>
+            <div>
+              <p className="text-[13px] font-medium text-[var(--text)]">Weights v{weights.data?.[0]?.weights_version ?? 1} is active</p>
+              <p className="text-[12px] text-[var(--text-3)]">
+                New weight versions are immutable — they take effect for leads scored after creation, while older
+                scores keep pointing at the version that produced them.
+              </p>
+            </div>
+          </li>
+        </ol>
+      </Card>
 
       <Card
         padding="none"
