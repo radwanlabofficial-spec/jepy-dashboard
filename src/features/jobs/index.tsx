@@ -39,6 +39,7 @@ const OUTCOME: Record<string, string> = { ok: 'ok', empty: 'warn', failed: 'fail
 
 export default function JobsPage() {
   const [openJob, setOpenJob] = useState<Job | null>(null);
+  const [showDead, setShowDead] = useState(false);
   const toast = useToast();
 
   const meta = useQuery<JobMeta>('jobs:meta', () => api.jobs.meta(), { staleTime: STALE_TIME.queue, pollMs: POLLING.jobs });
@@ -59,7 +60,7 @@ export default function JobsPage() {
   const hopsError = useErrorMessage(hops.error);
 
   const columns: Column<Job>[] = [
-    { key: 'id', header: 'Job', width: '12%', render: (job) => <span className="font-mono text-[13px] text-[var(--text)]">{job.id}</span> },
+    { key: 'id', header: 'Job', width: '12%', render: (job) => <span className="font-mono text-[13px] text-[var(--text)]" title={job.id}>{job.job_type} <span className="text-[10px] text-[var(--text-3)]">#{job.id.slice(0, 8)}</span></span> },
     { key: 'type', header: 'Type', width: '14%', render: (job) => <span className="text-[var(--text-3)]">{job.job_type}</span> },
     { key: 'target', header: 'Payload', width: '26%', render: (job) => <span className="block truncate font-mono text-[10px] text-[var(--text-3)]" title={job.payload_summary}>{job.payload_summary}</span> },
     { key: 'status', header: 'Status', width: '10%', render: (job) => <StatusPill status={JOB_STATUS[job.status]} label={job.status} /> },
@@ -123,10 +124,22 @@ export default function JobsPage() {
         </Card>
       </div>
 
-      <Card padding="none" title="Queue" subtitle="click a row to open the hop-by-hop route trace">
+      <Card padding="none" title="Queue" subtitle="click a row to open the hop-by-hop route trace"
+        action={
+          <label className="flex items-center gap-2 text-[12px] text-[var(--text-3)] cursor-pointer">
+            <input
+              type="checkbox"
+              checked={showDead}
+              onChange={(e) => setShowDead(e.target.checked)}
+              className="rounded"
+            />
+            Show dead jobs
+          </label>
+        }
+      >
         <DataTable<Job>
           columns={columns}
-          rows={jobs.data ?? []}
+          rows={(jobs.data ?? []).filter(job => showDead || job.status !== 'dead')}
           rowKey={(job) => job.id}
           loading={jobs.loading}
           error={error && !openJob ? error : null}
@@ -139,7 +152,7 @@ export default function JobsPage() {
 
       <Dialog
         open={openJob !== null}
-        title={`Route trace — ${openJob?.id ?? ''}`}
+        title={openJob ? `${openJob.job_type} #${openJob.id.slice(0, 8)}` : ''}
         onClose={() => setOpenJob(null)}
         width="lg"
         footer={
