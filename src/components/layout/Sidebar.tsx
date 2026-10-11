@@ -32,7 +32,6 @@ const NAV_MAIN: NavItem[] = [
   { label: 'Leads', to: '/leads', icon: Users, kbd: 'G L' },
   { label: 'Sources', to: '/sources', icon: Database, kbd: 'G S' },
   { label: 'Jobs', to: '/jobs', icon: ListChecks, kbd: 'G J' },
-  { label: 'Providers', to: '/providers', icon: Plug, kbd: 'G P' },
 ];
 
 const NAV_CONTROL: NavItem[] = [
