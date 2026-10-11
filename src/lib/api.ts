@@ -358,6 +358,13 @@ export const api = {
       Promise.reject(new ApiFailure({ code: 'E_PROVIDER_POLICY', message: 'cold email is not permitted on Resend', detail: { reason: 'cold_email' } })),
   },
 
+  device: {
+    pairingCode: (): Promise<{ code: string; expires_at: number; expires_in_sec: number }> =>
+      (isDemoMode
+        ? Promise.resolve({ code: '123456', expires_at: Date.now() / 1000 + 300, expires_in_sec: 300 })
+        : request<{ code: string; expires_at: number; expires_in_sec: number }>('/api/devices/pairing-code', { method: 'POST' })),
+  },
+
   settings: {
     devices: (): Promise<Device[]> => (isDemoMode ? Promise.resolve(demo.devices) : request<Device[]>('/api/devices')),
     registerDevice: (deviceLabel: string): Promise<RegisteredDevice> => {
