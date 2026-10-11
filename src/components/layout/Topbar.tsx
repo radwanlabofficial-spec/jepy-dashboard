@@ -12,6 +12,7 @@ import { Bell, Columns3, Menu, Moon, Search, Sun, Zap } from 'lucide-react';
 import { BUILD_SHA, isDemoMode } from '../../lib/api';
 import { formatMicro } from '../../lib/format';
 import type { JobMeta, Me } from '../../lib/types';
+import AccountSwitcher from './AccountSwitcher';
 
 export interface TopbarProps {
   me: Me | null;
@@ -148,6 +149,7 @@ export default function Topbar({ me, meta, mtdCostMicro, budgetMicro, cashGuardM
         <span className="rounded-md border border-[var(--border)] bg-[var(--panel)] px-1.5 py-0.5 text-[10px] font-medium text-[var(--text-2)]">
           {me?.env ?? 'local'}
         </span>
+        <AccountSwitcher />
         <Link
           to="/jobs"
           className="text-[13px] text-[var(--text-2)] transition-colors hover:text-[var(--text)]"
