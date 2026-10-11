@@ -238,7 +238,7 @@ export default function OverviewPage() {
             </Link>
           ) : null}
           {expiringQuota.length > 0 ? (
-            <Link to="/providers" className="inline-flex items-center gap-1.5 rounded-xl border border-amber-200 bg-[var(--amber-soft)] px-3 py-1.5 text-[13px] font-medium text-[var(--amber-deep)] transition-all hover:-translate-y-px">
+            <Link to="/vault" className="inline-flex items-center gap-1.5 rounded-xl border border-amber-200 bg-[var(--amber-soft)] px-3 py-1.5 text-[13px] font-medium text-[var(--amber-deep)] transition-all hover:-translate-y-px">
               <Clock size={13} aria-hidden="true" />
               {expiringQuota.length} quota expiring within 7 days
               <ArrowRight size={13} aria-hidden="true" />
