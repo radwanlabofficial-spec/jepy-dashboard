@@ -127,6 +127,16 @@ export default function SettingsPage() {
         description="Dispatcher, gates, device registration and the logs."
         actions={
           <>
+            <Button variant="secondary" icon={<RefreshCw size={12} aria-hidden="true" />} onClick={() => {
+              settings.refetch();
+              routerWeights.refetch();
+              devices.refetch();
+              errors.refetch();
+              geo.refetch();
+              niches.refetch();
+            }}>
+              Refresh all
+            </Button>
             <Button variant="secondary" icon={<RefreshCw size={12} aria-hidden="true" />} onClick={() => void backup.run()} loading={backup.loading}>
               Back up now
             </Button>
