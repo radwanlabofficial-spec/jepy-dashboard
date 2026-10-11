@@ -78,8 +78,8 @@ function Shell() {
   const location = useLocation();
 
   const me = useQuery<Me>('me', () => api.me(), { staleTime: 5 * 60_000 });
-  const meta = useQuery<JobMeta>('jobs:meta', () => api.jobs.meta(), { staleTime: 5_000, pollMs: 10_000 });
-  const stats = useQuery('leads:stats', () => api.leads.stats(), { staleTime: 5_000, pollMs: 30_000 });
+  const meta = useQuery<JobMeta>('jobs:meta', () => api.jobs.meta(), { staleTime: 5_000, pollMs: 0 // disabled });
+  const stats = useQuery('leads:stats', () => api.leads.stats(), { staleTime: 5_000, pollMs: 0 // disabled });
 
   if (sessionExpired) return <SessionExpired />;
 
