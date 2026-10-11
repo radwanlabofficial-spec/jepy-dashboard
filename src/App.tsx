@@ -25,7 +25,6 @@ import LeadsPage from './features/leads';
 import LeadDetailPage from './features/leads/LeadDetail';
 import SourcesPage from './features/sources';
 import JobsPage from './features/jobs';
-import ProvidersPage from './features/providers';
 import VaultPage from './features/vault';
 import ScoringPage from './features/scoring';
 import EmailPage from './features/email';
@@ -85,7 +84,7 @@ function Shell() {
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
-      <Sidebar me={me.data} meta={meta.data} />
+      <Sidebar meta={meta.data} />
       <div className="jepy-main flex min-w-0 flex-col">
         <Topbar
           me={me.data}
@@ -106,7 +105,6 @@ function Shell() {
             <Route path="/leads/:id" element={<LeadDetailPage />} />
             <Route path="/sources" element={<SourcesPage />} />
             <Route path="/jobs" element={<JobsPage />} />
-            <Route path="/providers" element={<ProvidersPage />} />
             <Route path="/vault" element={<VaultPage />} />
             <Route path="/scoring" element={<ScoringPage />} />
             <Route path="/email" element={<EmailPage />} />
