@@ -58,7 +58,15 @@ export default function SourcesPage() {
   const toast = useToast();
 
   const directories = useQuery<DirectorySource[]>('sources:directories', () => api.sources.directories(), { staleTime: 30_000 });
-  const packs = useQuery<SelectorPack[]>(`sources:packs:${packSource ?? 'all'}`, () => api.sources.packs(packSource ?? undefined), { staleTime: 30_000 });
+  // Packs endpoint may not exist on worker yet — treat E_NOT_FOUND as empty, don't show global error
+  const packs = useQuery<SelectorPack[]>(`sources:packs:${packSource ?? 'all'}`, async () => {
+    try {
+      return await api.sources.packs(packSource ?? undefined);
+    } catch (e) {
+      if (e instanceof Error && e.message.includes('E_NOT_FOUND')) return [];
+      throw e;
+    }
+  }, { staleTime: 30_000 });
   const manual = useQuery<ManualSource[]>('sources:manual', () => api.sources.manual(), { staleTime: 30_000 });
   const blocked = useQuery<BlockedSource[]>('sources:blocked', () => api.sources.blocked(), { staleTime: 30_000 });
   const imports = useQuery<ImportRun[]>('sources:imports', () => api.sources.imports(), { staleTime: 10_000, pollMs: POLLING.overview });
@@ -261,7 +269,7 @@ export default function SourcesPage() {
     <div data-component="sources-page" className="space-y-3">
       <PageHeader
         title="Sources"
-        description="Class A datasets, Class B directories, Class C manual sources and the one permanently blocked Class X row."
+        description="Where your leads come from — website directories (like Yelp, BBB), data imports, and manual additions. Manage scraping sources and import new lead lists here."
         actions={
           <Button variant="primary" icon={<Play size={12} aria-hidden="true" />} onClick={() => setImportOpen(true)}>
             New import
