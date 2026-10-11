@@ -3,16 +3,12 @@
  *
  * The extension is the only capture path: it reads the page Radwan is looking
  * at, extracts the structured lead fields, and pushes them into the ingest
- * queue through the device-pairing handshake.
+ * queue. Device registration happens in Settings → Devices.
  */
 
-import { useState, useEffect } from 'react';
 import { Camera, CheckCircle2, Download, KeyRound, MousePointerClick } from 'lucide-react';
 import PageHeader from '../../components/layout/PageHeader';
 import Card from '../../components/common/Card';
-import Button from '../../components/common/Button';
-import { useToast } from '../../components/common/Toast';
-import { api } from '../../lib/api';
 
 const STEPS = [
   {
@@ -22,13 +18,13 @@ const STEPS = [
   },
   {
     icon: <KeyRound size={16} aria-hidden="true" />,
-    title: 'Get your pairing code',
-    text: 'Open the extension and request a pairing code for this device.',
+    title: 'Register your device',
+    text: 'Go to Settings → Devices → Register device. Copy the token (click to copy).',
   },
   {
     icon: <MousePointerClick size={16} aria-hidden="true" />,
-    title: 'Enter it in the extension',
-    text: 'Type the code below into the extension to link this device.',
+    title: 'Enter token in extension',
+    text: 'Open extension options, paste the token, click "Save & test connection".',
   },
   {
     icon: <CheckCircle2 size={16} aria-hidden="true" />,
@@ -38,37 +34,6 @@ const STEPS = [
 ];
 
 export default function CapturesPage() {
-  const toast = useToast();
-  const [pairingCode, setPairingCode] = useState<string | null>(null);
-  const [expiresIn, setExpiresIn] = useState<number>(0);
-  const [generating, setGenerating] = useState(false);
-
-  // Countdown timer
-  useEffect(() => {
-    if (expiresIn <= 0) {
-      if (pairingCode) setPairingCode(null);
-      return;
-    }
-    const t = setTimeout(() => setExpiresIn((s) => s - 1), 1000);
-    return () => clearTimeout(t);
-  }, [expiresIn, pairingCode]);
-
-  const generateCode = async () => {
-    setGenerating(true);
-    try {
-      const res = await api.device.pairingCode();
-      setPairingCode(res.code);
-      setExpiresIn(res.expires_in_sec);
-      toast.push('Pairing code generated — enter it in the extension');
-    } catch (e) {
-      toast.push('Failed to generate code: ' + (e instanceof Error ? e.message : 'unknown'));
-    } finally {
-      setGenerating(false);
-    }
-  };
-
-  const formatTime = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
-
   return (
     <div data-component="captures-page" className="space-y-3">
       <PageHeader
@@ -77,35 +42,9 @@ export default function CapturesPage() {
       />
 
       <Card
-        title="Device pairing"
-        subtitle="Generate a code here, enter it in the extension to link this device."
-        action={
-          <Button
-            variant="secondary"
-            icon={<KeyRound size={13} aria-hidden="true" />}
-            onClick={generateCode}
-            loading={generating}
-          >
-            Generate code
-          </Button>
-        }
+        title="Connect your device"
+        subtitle="Register a device in Settings, then enter the token in the extension."
       >
-        <div className="mb-5 flex items-center gap-4">
-          <div
-            className={`rounded-md border border-dashed border-[var(--border)] bg-[var(--panel)] px-6 py-3 font-mono text-2xl tracking-[0.5em] ${
-              pairingCode ? 'text-[var(--text)]' : 'text-[var(--text-3)]'
-            }`}
-            aria-label="Pairing code"
-          >
-            {pairingCode ?? '------'}
-          </div>
-          <p className="max-w-xs text-[12px] leading-relaxed text-[var(--text-3)]">
-            {pairingCode
-              ? `Expires in ${formatTime(expiresIn)} — enter this in the extension's options page.`
-              : 'Click "Generate code" to get a 6-digit pairing code. It expires after 5 minutes.'}
-          </p>
-        </div>
-
         <ol className="grid gap-3 sm:grid-cols-2">
           {STEPS.map((step, index) => (
             <li
