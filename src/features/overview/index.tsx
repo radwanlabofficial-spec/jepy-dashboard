@@ -186,19 +186,36 @@ export default function OverviewPage() {
               Refresh
             </button>
             <Link
-              to="/leads"
-              className="flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 py-3 text-[13.5px] font-semibold text-white backdrop-blur transition-all hover:-translate-y-0.5 hover:bg-white/15"
-            >
-              <Sparkles size={16} aria-hidden="true" />
-              Take the tour
-            </Link>
-            <Link
               to="/scoring"
               className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#8b5cf6] to-[#d946ef] px-5 py-3 text-[13.5px] font-semibold text-white shadow-[0_8px_24px_rgba(139,92,246,.4)] transition-all hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(139,92,246,.5)]"
             >
               <Zap size={16} aria-hidden="true" />
               Open scoring
             </Link>
+          </div>
+        </div>
+
+        {/* KPI cards inside command deck */}
+        <div className="mt-6 grid grid-cols-2 gap-3 xl:grid-cols-4">
+          <div className="rounded-xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur">
+            <div className="text-[11px] font-medium uppercase tracking-wide text-slate-300">Total leads</div>
+            <div className="mt-1 text-[24px] font-bold text-white">{formatNumber(s?.total ?? null)}</div>
+            <div className="text-[11px] text-slate-400">{formatNumber(s?.new_today ?? null)} new today</div>
+          </div>
+          <div className="rounded-xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur">
+            <div className="text-[11px] font-medium uppercase tracking-wide text-slate-300">Hot leads</div>
+            <div className="mt-1 text-[24px] font-bold text-white">{formatNumber(hotCount)}</div>
+            <div className="text-[11px] text-slate-400">tier HOT · ready for outreach</div>
+          </div>
+          <div className="rounded-xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur">
+            <div className="text-[11px] font-medium uppercase tracking-wide text-slate-300">Queue depth</div>
+            <div className="mt-1 text-[24px] font-bold text-white">{formatNumber(meta.data?.queue_depth ?? null)}</div>
+            <div className="text-[11px] text-slate-400">pending jobs</div>
+          </div>
+          <div className="rounded-xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur">
+            <div className="text-[11px] font-medium uppercase tracking-wide text-slate-300">MTD spend</div>
+            <div className="mt-1 text-[24px] font-bold text-white">{formatMicro(s?.mtd_cost_micro ?? null)}</div>
+            <div className="text-[11px] text-slate-400">month to date</div>
           </div>
         </div>
       </div>
@@ -242,26 +259,8 @@ export default function OverviewPage() {
         </div>
       ) : null}
 
-      {/* KPI grid */}
-      <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
-        <KpiCard label="Total leads" hint={`${formatNumber(s?.new_today ?? null)} new today`} accent="emerald" index={0} loading={stats.loading && !s} to="/leads">
-          {formatNumber(s?.total ?? null)}
-        </KpiCard>
-        <KpiCard label="Hot leads" hint="tier HOT · ready for outreach" accent="rose" index={1} loading={stats.loading && !s} to="/leads?tier=HOT">
-          <span className="flex items-center gap-2">
-            {formatNumber(hotCount)}
-            <Users size={16} className="text-[var(--text-3)]" aria-hidden="true" />
-          </span>
-        </KpiCard>
-        <KpiCard label="Queue depth" hint={meta.data ? `oldest pending ${relativeTime(Date.now() / 1000 - meta.data.oldest_pending_sec)}` : undefined} accent="violet" index={2} loading={meta.loading && !meta.data} to="/jobs">
-          {formatNumber(meta.data?.queue_depth ?? null)}
-        </KpiCard>
-        <KpiCard label="MTD spend" hint={`guard trips at ${formatMicro(60_000_000, 0)}`} accent="amber" index={3} loading={stats.loading && !s} to="/providers">
-          {formatMicro(s?.mtd_cost_micro ?? null)}
-        </KpiCard>
-      </div>
-
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+      {/* 3rd section: BrightData + Failures (with animation) */}
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2 jepy-enter" style={{ animationDelay: '100ms' }}>
         <SectionCard
           title="BrightData credit burn"
           subtitle={`daily guard ${formatNumber(BD_DAILY_GUARD)} · monthly line ${BD_MONTHLY_PCT_LINE}%`}
@@ -297,7 +296,8 @@ export default function OverviewPage() {
         </SectionCard>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+      {/* 4th section: Imports + Provider pool (with animation) */}
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2 jepy-enter" style={{ animationDelay: '200ms' }}>
         <SectionCard
           title="Recent imports"
           action={<Link to="/sources" className="text-[13px] font-medium text-[var(--text-2)] transition-colors hover:text-[var(--emerald-deep)]">open Sources →</Link>}
