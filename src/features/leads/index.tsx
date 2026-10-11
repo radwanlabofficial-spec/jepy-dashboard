@@ -115,8 +115,15 @@ export default function LeadsPage() {
     {
       key: 'email',
       header: 'Email',
-      width: '10%',
-      render: (lead) => <StatusPill status={EMAIL_STATUS[lead.email_status] ?? 'disabled'} label={lead.email_status} />,
+      width: '14%',
+      render: (lead) => (
+        <div className="min-w-0">
+          <span className="block truncate text-[12px] text-[var(--text)]" title={lead.email ?? ''}>
+            {lead.email ?? <span className="text-[var(--text-3)]">—</span>}
+          </span>
+          <StatusPill status={EMAIL_STATUS[lead.email_status] ?? 'disabled'} label={lead.email_status} />
+        </div>
+      ),
     },
     {
       key: 'status',
@@ -156,6 +163,24 @@ export default function LeadsPage() {
           </>
         }
       />
+
+      {/* Data & Outreach Plan */}
+      <Card title="Data columns & outreach plan" subtitle="what's shown, what's coming">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3 text-[12px]">
+          <div>
+            <h4 className="mb-1.5 font-semibold text-[var(--text)]">Visible now</h4>
+            <p className="text-[var(--text-2)]">Name, domain, city, niche, tier, scores, email + verification status, lead status.</p>
+          </div>
+          <div>
+            <h4 className="mb-1.5 font-semibold text-[var(--text)]">Coming (needs schema)</h4>
+            <p className="text-[var(--text-2)]">Phone/mobile, social links (LinkedIn, Facebook), category name — requires worker DB migration to add columns.</p>
+          </div>
+          <div>
+            <h4 className="mb-1.5 font-semibold text-[var(--text)]">Outreach selection</h4>
+            <p className="text-[var(--text-2)]">Select leads via checkbox → "Add to outreach" → creates a campaign in Email page. Bulk selection + CSV export already available.</p>
+          </div>
+        </div>
+      </Card>
 
       <Card padding="compact" title="Filters" subtitle="URL-backed — refresh keeps them">
         <div className="grid grid-cols-6 gap-2">
