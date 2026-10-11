@@ -3,16 +3,16 @@
  *
  * The extension is the only capture path: it reads the page Radwan is looking
  * at, extracts the structured lead fields, and pushes them into the ingest
- * queue through the device-pairing handshake. There is no API call from this
- * page — pairing codes are generated per device inside the extension itself,
- * so a "generate code" control here would be a promise the server cannot keep.
+ * queue through the device-pairing handshake.
  */
 
+import { useState, useEffect } from 'react';
 import { Camera, CheckCircle2, Download, KeyRound, MousePointerClick } from 'lucide-react';
 import PageHeader from '../../components/layout/PageHeader';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
 import { useToast } from '../../components/common/Toast';
+import { api } from '../../lib/api';
 
 const STEPS = [
   {
@@ -39,6 +39,35 @@ const STEPS = [
 
 export default function CapturesPage() {
   const toast = useToast();
+  const [pairingCode, setPairingCode] = useState<string | null>(null);
+  const [expiresIn, setExpiresIn] = useState<number>(0);
+  const [generating, setGenerating] = useState(false);
+
+  // Countdown timer
+  useEffect(() => {
+    if (expiresIn <= 0) {
+      if (pairingCode) setPairingCode(null);
+      return;
+    }
+    const t = setTimeout(() => setExpiresIn((s) => s - 1), 1000);
+    return () => clearTimeout(t);
+  }, [expiresIn, pairingCode]);
+
+  const generateCode = async () => {
+    setGenerating(true);
+    try {
+      const res = await api.device.pairingCode();
+      setPairingCode(res.code);
+      setExpiresIn(res.expires_in_sec);
+      toast.push('Pairing code generated — enter it in the extension');
+    } catch (e) {
+      toast.push('Failed to generate code: ' + (e instanceof Error ? e.message : 'unknown'));
+    } finally {
+      setGenerating(false);
+    }
+  };
+
+  const formatTime = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 
   return (
     <div data-component="captures-page" className="space-y-3">
@@ -49,12 +78,13 @@ export default function CapturesPage() {
 
       <Card
         title="Device pairing"
-        subtitle="Four steps link the extension to this console. Pairing codes are generated per-device inside the extension."
+        subtitle="Generate a code here, enter it in the extension to link this device."
         action={
           <Button
             variant="secondary"
             icon={<KeyRound size={13} aria-hidden="true" />}
-            onClick={() => toast.push('Pairing codes are generated per-device')}
+            onClick={generateCode}
+            loading={generating}
           >
             Generate code
           </Button>
@@ -62,13 +92,17 @@ export default function CapturesPage() {
       >
         <div className="mb-5 flex items-center gap-4">
           <div
-            className="rounded-md border border-dashed border-[var(--border)] bg-[var(--panel)] px-6 py-3 font-mono text-2xl tracking-[0.5em] text-[var(--text-3)]"
-            aria-label="Pairing code placeholder"
+            className={`rounded-md border border-dashed border-[var(--border)] bg-[var(--panel)] px-6 py-3 font-mono text-2xl tracking-[0.5em] ${
+              pairingCode ? 'text-[var(--text)]' : 'text-[var(--text-3)]'
+            }`}
+            aria-label="Pairing code"
           >
-            ----
+            {pairingCode ?? '------'}
           </div>
           <p className="max-w-xs text-[12px] leading-relaxed text-[var(--text-3)]">
-            Your code appears here once you request it from the extension. It expires after a few minutes.
+            {pairingCode
+              ? `Expires in ${formatTime(expiresIn)} — enter this in the extension's options page.`
+              : 'Click "Generate code" to get a 6-digit pairing code. It expires after 5 minutes.'}
           </p>
         </div>
 
