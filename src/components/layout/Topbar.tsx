@@ -8,7 +8,7 @@
 
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Bell, Columns3, Menu, Moon, Search, Sun, Zap } from 'lucide-react';
+import { Bell, Menu, Moon, Search, Sun, Zap } from 'lucide-react';
 import { BUILD_SHA, isDemoMode } from '../../lib/api';
 import { formatMicro } from '../../lib/format';
 import type { JobMeta, Me } from '../../lib/types';
@@ -23,35 +23,18 @@ export interface TopbarProps {
   cashGuardMicro: number;
 }
 
-function useNow() {
-  const [now, setNow] = useState(() => new Date());
-  useEffect(() => {
-    const t = setInterval(() => setNow(new Date()), 30_000);
-    return () => clearInterval(t);
-  }, []);
-  return now;
-}
-
 export default function Topbar({ me, meta, mtdCostMicro, budgetMicro, cashGuardMicro }: TopbarProps) {
   const overGuard = mtdCostMicro !== null && mtdCostMicro >= cashGuardMicro;
-  const now = useNow();
   const navigate = useNavigate();
   const [nightOps, setNightOps] = useState(() => {
     try { return localStorage.getItem('jepy-night') === 'on'; } catch { return false; }
   });
-  const [compact, setCompact] = useState(() => {
-    try { return localStorage.getItem('jepy-density') === 'compact'; } catch { return false; }
-  });
+  const [notifOpen, setNotifOpen] = useState(false);
 
   useEffect(() => {
     document.body.classList.toggle('night-ops', nightOps);
     try { localStorage.setItem('jepy-night', nightOps ? 'on' : 'off'); } catch { /* ignore */ }
   }, [nightOps]);
-
-  useEffect(() => {
-    document.body.classList.toggle('density-compact', compact);
-    try { localStorage.setItem('jepy-density', compact ? 'compact' : 'comfortable'); } catch { /* ignore */ }
-  }, [compact]);
 
   // Scrolled shadow
   useEffect(() => {
@@ -73,19 +56,13 @@ export default function Topbar({ me, meta, mtdCostMicro, budgetMicro, cashGuardM
       }
     };
     const onNightToggle = () => setNightOps((v) => !v);
-    const onDensityToggle = () => setCompact((v) => !v);
     window.addEventListener('keydown', onKey);
     window.addEventListener('jepy:night-toggle', onNightToggle);
-    window.addEventListener('jepy:density-toggle', onDensityToggle);
     return () => {
       window.removeEventListener('keydown', onKey);
       window.removeEventListener('jepy:night-toggle', onNightToggle);
-      window.removeEventListener('jepy:density-toggle', onDensityToggle);
     };
   }, []);
-
-  const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 
   return (
     <header id="topbar" data-component="topbar" className="jepy-topbar">
@@ -100,16 +77,6 @@ export default function Topbar({ me, meta, mtdCostMicro, budgetMicro, cashGuardM
 
       <button
         className="jepy-icon-btn"
-        title={compact ? 'Comfortable density' : 'Compact density'}
-        aria-label="Toggle density"
-        aria-pressed={compact}
-        onClick={() => setCompact((c) => !c)}
-      >
-        <Columns3 size={17} aria-hidden="true" />
-      </button>
-
-      <button
-        className="jepy-icon-btn"
         title={nightOps ? 'Day mode (N)' : 'Night Ops (N)'}
         aria-label="Toggle Night Ops"
         aria-pressed={nightOps}
@@ -117,14 +84,6 @@ export default function Topbar({ me, meta, mtdCostMicro, budgetMicro, cashGuardM
       >
         {nightOps ? <Sun size={17} aria-hidden="true" /> : <Moon size={17} aria-hidden="true" />}
       </button>
-
-      <div className="date-pill flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--panel)] px-2.5 py-1.5 shadow-[var(--shadow)]" title={`${dateStr} ${timeStr}`}>
-        <span className="relative flex h-1.5 w-1.5" aria-hidden="true">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
-          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
-        </span>
-        <span className="whitespace-nowrap text-[11px] font-medium text-[var(--text-3)]">{dateStr} · {timeStr}</span>
-      </div>
 
       <button
         className="search ml-auto flex w-[300px] cursor-pointer items-center gap-2.5 rounded-xl border border-[var(--border)] bg-[var(--panel)] px-3.5 py-2.5 shadow-[var(--shadow)] transition-all hover:-translate-y-px hover:shadow-[var(--shadow-lg)]"
@@ -146,9 +105,6 @@ export default function Topbar({ me, meta, mtdCostMicro, budgetMicro, cashGuardM
             Demo data
           </span>
         ) : null}
-        <span className="rounded-md border border-[var(--border)] bg-[var(--panel)] px-1.5 py-0.5 text-[10px] font-medium text-[var(--text-2)]">
-          {me?.env ?? 'local'}
-        </span>
         <AccountSwitcher />
         <Link
           to="/jobs"
@@ -175,16 +131,29 @@ export default function Topbar({ me, meta, mtdCostMicro, budgetMicro, cashGuardM
         </span>
       </div>
 
-      <button
-        className="jepy-icon-btn relative"
-        title="Notifications — open error log"
-        aria-label="Notifications"
-        onClick={() => navigate('/settings')}
-      >
-        <Bell size={17} aria-hidden="true" />
-        {/* Red dot removed: was always-on (fake). Real error indicator needs
-            errors_24h from API; add when D1 budget allows the extra polling. */}
-      </button>
+      <div className="relative">
+        <button
+          className="jepy-icon-btn relative"
+          title="Notifications"
+          aria-label="Notifications"
+          aria-expanded={notifOpen}
+          onClick={() => setNotifOpen(!notifOpen)}
+        >
+          <Bell size={17} aria-hidden="true" />
+        </button>
+        {notifOpen && (
+          <div className="absolute right-0 top-full z-50 mt-2 w-80 rounded-xl border border-[var(--border)] bg-[var(--panel)] p-3 shadow-xl">
+            <div className="mb-2 text-[12px] font-semibold text-[var(--text)]">Notifications</div>
+            <div className="text-[12px] text-[var(--text-3)]">No new notifications</div>
+            <button
+              onClick={() => { setNotifOpen(false); navigate('/settings'); }}
+              className="mt-3 w-full rounded-lg bg-[var(--hover)] px-3 py-1.5 text-[12px] font-medium text-[var(--text-2)] hover:text-[var(--text)]"
+            >
+              View error log →
+            </button>
+          </div>
+        )}
+      </div>
 
       <button
         className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#10b981] to-[#7ed321] px-4 py-2.5 text-[13px] font-semibold text-white shadow-[0_4px_16px_rgba(16,185,129,.35)] transition-all hover:-translate-y-px hover:shadow-[0_8px_24px_rgba(16,185,129,.45)]"
