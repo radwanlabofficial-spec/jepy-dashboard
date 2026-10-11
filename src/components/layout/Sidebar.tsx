@@ -4,8 +4,8 @@
  * Dark navy command deck, fixed position, collapsible to icon rail.
  * Includes the LIVE OPS section with pulsing status, quota bar, sparkline.
  *
- * Captures is deliberately visible but disabled. A missing page and a gated page
- * must not look the same in an audit.
+ * Captures hosts the Chrome extension pairing surface. The device-pairing
+ * section generates codes per device through the extension itself.
  */
 
 import { useEffect, useState } from 'react';
@@ -15,7 +15,7 @@ import {
   LayoutDashboard, ListChecks, Mail, Plug, Settings, Users,
   type LucideIcon,
 } from 'lucide-react';
-import type { JobMeta, Me } from '../../lib/types';
+import type { JobMeta } from '../../lib/types';
 
 interface NavItem {
   label: string;
@@ -43,9 +43,7 @@ const NAV_CONTROL: NavItem[] = [
     label: 'Captures',
     to: '/captures',
     icon: Camera,
-    disabled: false,
-    badge: 'Soon',
-    title: 'Manual capture is gated off until ADR-035',
+    kbd: 'G C',
   },
 ];
 
@@ -86,11 +84,10 @@ function NavGroup({ label, items }: { label: string; items: NavItem[] }) {
 }
 
 interface SidebarProps {
-  me: Me | null;
   meta: JobMeta | null;
 }
 
-export default function Sidebar({ me, meta }: SidebarProps) {
+export default function Sidebar({ meta }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(() => {
     try {
       return localStorage.getItem('jepy-sb') === 'collapsed';
@@ -210,20 +207,6 @@ export default function Sidebar({ me, meta }: SidebarProps) {
         <NavGroup label="System" items={NAV_SYSTEM} />
       </nav>
 
-      {/* Collapse + user */}
-      <div className="border-t border-[var(--side-border)] p-3">
-        <div className="sidebar-foot nav-text flex items-center gap-2.5 px-2.5">
-          <div className="avatar flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#7ed321] to-[#10b981] text-[13px] font-bold text-[#07130a]">
-            {(me?.email ?? 'R').charAt(0).toUpperCase()}
-          </div>
-          <div className="user-meta min-w-0 flex-1 overflow-hidden">
-            <div className="n truncate text-[12.5px] font-semibold text-[var(--side-text)]">
-              {(me?.email ?? 'operator').split('@')[0]}
-            </div>
-            <div className="e truncate text-[10.5px] text-[var(--side-text-2)]">{me?.email ?? '—'}</div>
-          </div>
-        </div>
-      </div>
     </aside>
   );
 }
