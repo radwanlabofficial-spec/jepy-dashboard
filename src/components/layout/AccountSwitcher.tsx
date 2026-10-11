@@ -16,11 +16,11 @@ interface CfAccount {
 // Configured via environment or defaults; worker URLs filled after deployment
 const ACCOUNTS: CfAccount[] = [
   { id: '1', label: 'Primary', email: 'Radwanlab.official@gmail.com', workerUrl: 'https://jepy-worker.radwanlab-official.workers.dev', quota: '5M/day' },
-  { id: '2', label: 'Account 2', email: 'Urban.edge.inc.official@gmail.com', workerUrl: '', quota: '5M/day' },
-  { id: '3', label: 'Account 3', email: 'Radwanislamb18@gmail.com', workerUrl: '', quota: '5M/day' },
-  { id: '4', label: 'Account 4', email: 'Maikkruger68@gmail.com', workerUrl: '', quota: '5M/day' },
-  { id: '5', label: 'Account 5', email: 'Rwan6292@gmail.com', workerUrl: '', quota: '5M/day' },
-  { id: '6', label: 'Account 6', email: 'Mosfikurrohim05@gmail.com', workerUrl: '', quota: '5M/day' },
+  { id: '2', label: 'Account 2', email: 'Urban.edge.inc.official@gmail.com', workerUrl: 'https://jepy-worker-2.urban-edge-inc-official.workers.dev', quota: '5M/day' },
+  { id: '3', label: 'Account 3', email: 'Radwanislamb18@gmail.com', workerUrl: 'https://jepy-worker-3.radwanislamb18.workers.dev', quota: '5M/day' },
+  { id: '4', label: 'Account 4', email: 'Maikkruger68@gmail.com', workerUrl: 'https://jepy-worker-4.maikkruger68.workers.dev', quota: '5M/day' },
+  { id: '5', label: 'Account 5', email: 'Rwan6292@gmail.com', workerUrl: 'https://jepy-worker-5.rwan6292.workers.dev', quota: '5M/day' },
+  { id: '6', label: 'Account 6', email: 'Mosfikurrohim05@gmail.com', workerUrl: 'https://jepy-worker-6.mosfikurrohim05.workers.dev', quota: '5M/day' },
 ];
 
 const STORAGE_KEY = 'jepy:cf-account';
@@ -43,10 +43,10 @@ export default function AccountSwitcher() {
     <div className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="rounded-md border border-[var(--border)] bg-[var(--panel)] px-2 py-0.5 text-[10px] font-medium text-[var(--text-2)] hover:text-[var(--text)]"
+        className="rounded-md border border-[var(--border)] bg-[var(--panel)] px-2 py-0.5 text-[14px] hover:text-[var(--text)]"
         title={`Active: ${active.email} (${active.quota})`}
       >
-        ☁️ {active.label}
+        ☁️
       </button>
       {open && (
         <div className="absolute right-0 top-full z-50 mt-1 w-64 rounded-lg border border-[var(--border)] bg-[var(--panel)] p-1 shadow-lg">
