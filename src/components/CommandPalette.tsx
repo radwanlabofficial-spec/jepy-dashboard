@@ -42,7 +42,6 @@ const NAV_ITEMS: { label: string; to: string; icon: LucideIcon; hint: string }[]
   { label: 'Go to Leads', to: '/leads', icon: Users, hint: 'G L' },
   { label: 'Go to Sources', to: '/sources', icon: Database, hint: 'G S' },
   { label: 'Go to Jobs', to: '/jobs', icon: ListChecks, hint: 'G J' },
-  { label: 'Go to Providers', to: '/providers', icon: Plug, hint: 'G P' },
   { label: 'Go to Vault', to: '/vault', icon: KeyRound, hint: 'G V' },
   { label: 'Go to Scoring', to: '/scoring', icon: Gauge, hint: 'G G' },
   { label: 'Go to Email', to: '/email', icon: Mail, hint: 'G E' },
